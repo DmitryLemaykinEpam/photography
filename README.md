@@ -8,7 +8,7 @@ Assumptions about how users will interact with the app:
   a) The minimal iOS version is 11.4
 
 2) App starts with Map screen and default location set
-  a) Default locations go alon with the app as a resorce
+  a) Default locations go along with the app as a resource
   b) The Map display Default and User created loactions
 
 3) User can mange locations from Map screen
