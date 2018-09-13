@@ -72,6 +72,7 @@ class VisibleLocationsManager : NSObject
         return newCustomLocation
     }
     
+    // fetchedResultsController need to fetch at leas once to start receave changes in context
     func fetch()
     {
         do
@@ -90,7 +91,10 @@ class VisibleLocationsManager : NSObject
     
     func allVisibleLocations() -> [CustomLocation]?
     {
-        let fetchedLocations = fetchedResultsController.fetchedObjects as? [CustomLocation]
+        guard let fetchedLocations = fetchedResultsController.fetchedObjects as? [CustomLocation] else {
+            return nil
+        }
+        
         return fetchedLocations
     }
     
@@ -100,8 +104,8 @@ class VisibleLocationsManager : NSObject
             print("Error: don't find location to delete")
             return
         }
-        
-        let deletionResult = locationToDelete.mr_deleteEntity()
+        let context = NSManagedObjectContext.mr_default()
+        let deletionResult = locationToDelete.mr_deleteEntity(in: context)
         if deletionResult == false {
             print("Error: Could not delete selected location")
             return
@@ -110,12 +114,17 @@ class VisibleLocationsManager : NSObject
     
     func customLocationWith(lat: Double, lon: Double) -> CustomLocation?
     {
-        guard let fetchedLocations = fetchedResultsController.fetchedObjects as? [CustomLocation] else {
+        guard let fetchRequestResults = fetchedResultsController.fetchedObjects else {
             return nil
         }
         
-        for location in fetchedLocations
+        for fetchRequestResult in fetchRequestResults
         {
+            guard let location = fetchRequestResult as? CustomLocation else {
+                print("Error: Could not cast fetchRequestResult to CustomLocation")
+                return nil
+            }
+            
             if location.lat == lat && location.lon == lon
             {
                 return location
@@ -139,22 +148,17 @@ extension VisibleLocationsManager : NSFetchedResultsControllerDelegate
         {
         case .insert:
             self.delegate?.addCustomLocation(anObject as! CustomLocation)
-   
             break
         case .delete:
             self.delegate?.removeCustomLocation(anObject as! CustomLocation)
             break
         case .update:
+            
             break
             
         default:
             // Do nothing
             break
         }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        
     }
 }

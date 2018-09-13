@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import PhotographyStartup
 
 class VisibleLocationsManagerDelegate_Moc : VisibleLocationsManagerDelegate
 {
@@ -14,7 +15,7 @@ class VisibleLocationsManagerDelegate_Moc : VisibleLocationsManagerDelegate
     
     var didCall_addCustomLocation = false
     var didCall_removeCustomLocation = false
-    var didCall_removeAllCustomLocation = false
+    var didCall_reloadAllCustomLocation = false
     
     var customLocation : CustomLocation?
     
@@ -30,8 +31,8 @@ class VisibleLocationsManagerDelegate_Moc : VisibleLocationsManagerDelegate
         expectation?.fulfill()
     }
     
-    func removeAllCustomLocation() {
-        didCall_removeAllCustomLocation = false
+    func reloadAllCustomLocation() {
+        didCall_reloadAllCustomLocation = false
         expectation?.fulfill()
     }
 }
