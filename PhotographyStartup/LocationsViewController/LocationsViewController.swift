@@ -19,6 +19,10 @@ class LocationsViewController: UIViewController
     
     var fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>()
     
+    struct Constants {
+        static let LocationCellReuseId = "LocationCellReuseId"
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -126,7 +130,7 @@ extension LocationsViewController: UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "LocationCellReuseId") as? LocationTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.LocationCellReuseId) as? LocationTableViewCell else {
             return UITableViewCell()
         }
         

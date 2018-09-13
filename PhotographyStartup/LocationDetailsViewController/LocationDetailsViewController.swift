@@ -37,16 +37,27 @@ class LocationDetailsViewController: UIViewController
         location.notes = self.descriptionTextView.text
         
         NSManagedObjectContext.mr_default().mr_saveToPersistentStore { (success, error) in
-            
-            let message = success ? "Success" : "Could not save"
-            
-            let ac = UIAlertController(title: "Save compleat", message: message, preferredStyle: .actionSheet)
-            let actionOk = UIAlertAction(title: "Ok", style: .default, handler: { action in
-                self.navigateBack()
-            })
-            ac.addAction(actionOk)
-            self.present(ac, animated: true)
+            self.showSaveResultAlert(success: success, error: error)
         }
+    }
+    
+    func showSaveResultAlert(success: Bool, error: Error?)
+    {
+        let message = success ? "Success" : "Could not save"
+        
+        let alertController = UIAlertController(title: "Save compleat", message: message, preferredStyle: .actionSheet)
+        let confirmAction = UIAlertAction(title: "Ok", style: .default, handler: { action in
+            self.navigateBack()
+        })
+        alertController.addAction(confirmAction)
+        
+        if let popoverController = alertController.popoverPresentationController
+        {
+            popoverController.sourceView = view
+            popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.maxY, width: 0, height: 0)
+        }
+        
+        self.present(alertController, animated: true)
     }
     
     @IBAction func backTap(_ sender: Any) {

@@ -14,7 +14,7 @@ protocol VisibleLocationsManagerDelegate
 {
     func addCustomLocation(_ newCustomLocation: CustomLocation)
     func removeCustomLocation(_ customLocation: CustomLocation)
-    func removeAllCustomLocation()
+    func reloadAllCustomLocation()
 }
 
 class VisibleLocationsManager : NSObject
@@ -85,16 +85,13 @@ class VisibleLocationsManager : NSObject
         
         print("Fetched count:\(String(describing: self.fetchedResultsController.fetchedObjects?.count))")
         
-        guard let fetchedLocations = self.fetchedResultsController.fetchedObjects as? [CustomLocation] else {
-            return
-        }
-        
-        self.delegate?.removeAllCustomLocation()
-        
-        for location in fetchedLocations
-        {
-            self.delegate?.addCustomLocation(location)
-        }
+        self.delegate?.reloadAllCustomLocation()
+    }
+    
+    func allVisibleLocations() -> [CustomLocation]?
+    {
+        let fetchedLocations = fetchedResultsController.fetchedObjects as? [CustomLocation]
+        return fetchedLocations
     }
     
     func removeCustomeLocation(lat: Double, lon: Double)

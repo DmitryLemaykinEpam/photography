@@ -21,13 +21,15 @@ class HomeViewController: UIViewController
 
     var selectedLocation : CustomLocation?
     
-    let customAnnotationReuseId = "customAnnotationReuseId"
+    struct Constants {
+        static let CustomAnnotationReuseId = "customAnnotationReuseId"
+    }
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
 
-        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: customAnnotationReuseId)
+        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier:   Constants.CustomAnnotationReuseId)
         mapView.zoom(toCenterCoordinate: VisibleLocationsManager.Sydney, zoomLevel: 10)
         
         visibleLocationsManager.delegate = self
@@ -86,7 +88,6 @@ class HomeViewController: UIViewController
         newCustomeLocation.lon = locationCoordinate.longitude
         
         visibleLocationsManager.saveToPersistentStore()
-        //self.addCustomLocation(newCustomeLocation)
     }
     
     @IBAction func allLocationsTap(_ sender: Any) {
@@ -104,11 +105,20 @@ extension HomeViewController
 {
     func addAnnotationForCustomLocation(_ customLocation : CustomLocation)
     {
-        let annotation = MKPointAnnotation()
-        annotation.title = customLocation.name
-        annotation.coordinate = CLLocationCoordinate2DMake(customLocation.lat, customLocation.lon)
-        
+        let annotation = MKPointAnnotation.createFor(customLocation)
         mapView.addAnnotation(annotation)
+    }
+    
+    func addAnnotationsForCustomLocations(_ customLocations : [CustomLocation])
+    {
+        var annotations = [MKPointAnnotation]()
+        for customLocation in customLocations
+        {
+            let annotation = MKPointAnnotation.createFor(customLocation)
+            annotations.append(annotation)
+        }
+        
+        mapView.addAnnotations(annotations)
     }
 }
 
@@ -126,7 +136,7 @@ extension HomeViewController : MKMapViewDelegate
             return nil
         }
         
-        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier:customAnnotationReuseId) as? MKMarkerAnnotationView else
+        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier:Constants.CustomAnnotationReuseId) as? MKMarkerAnnotationView else
         {
             return nil
         }
@@ -155,26 +165,43 @@ extension HomeViewController : MKMapViewDelegate
             return
         }
         
-        let ac = UIAlertController(title: "Location Selected", message: "Edit location: \(String(describing: selectedLocation.name))?", preferredStyle: .actionSheet)
-        let actionYes = UIAlertAction(title: "Edit", style: .default, handler: { action in
+        self.showLocationActionSheet(customeLocation: selectedLocation, annotationView: view)
+    }
+    
+    func showLocationActionSheet(customeLocation: CustomLocation, annotationView: MKAnnotationView?)
+    {
+        let title = "What to do with this location?"
+        let message = "Edit location: \(String(describing: customeLocation.name))?"
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        
+        let editAction = UIAlertAction(title: "Edit", style: .default, handler: { action in
             let detailsViewController = LocationDetailsViewController.storyboardViewController()
-            detailsViewController.location = selectedLocation
+            detailsViewController.location = customeLocation
             
             self.present(detailsViewController, animated: true, completion: nil)
         })
-        ac.addAction(actionYes)
+        alertController.addAction(editAction)
         
-        let actionNo = UIAlertAction(title: "Move manualy", style: .cancel, handler: nil)
-        ac.addAction(actionNo)
+        let dafaultAction = UIAlertAction(title: "Move manualy", style: .default, handler: nil)
+        alertController.addAction(dafaultAction)
         
-        let actionRemove = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
-            mapView.removeAnnotation(annotation)
-            self.visibleLocationsManager.removeCustomeLocation(lat: selectedLocation.lat, lon: selectedLocation.lon)
+        let removeAction = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
+            self.visibleLocationsManager.removeCustomeLocation(lat: customeLocation.lat, lon: customeLocation.lon)
             self.visibleLocationsManager.saveToPersistentStore()
         })
-        ac.addAction(actionRemove)
-
-        self.present(ac, animated: true)
+        alertController.addAction(removeAction)
+        
+        if let popoverController = alertController.popoverPresentationController {
+            guard let annotationView = annotationView else {
+                print("Error: annotationView is needed to show alertController")
+                return
+            }
+            
+            popoverController.sourceView = annotationView
+            popoverController.sourceRect = CGRect(x: annotationView.bounds.midX, y: annotationView.bounds.maxY, width: 0, height: 0)
+        }
+        
+        self.present(alertController, animated: true)
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState)
@@ -232,17 +259,48 @@ extension HomeViewController : VisibleLocationsManagerDelegate
         
         for annotation in visibleAnnotations
         {
-            if annotation.coordinate.latitude == customLocation.lat &&
-                annotation.coordinate.longitude == customLocation.lon {
+            if annotation.forLocation(customLocation)
+            {
                 mapView.removeAnnotation(annotation)
                 break
             }
         }
     }
     
-    func removeAllCustomLocation()
+    func reloadAllCustomLocation()
     {
-        mapView.removeAnnotations(mapView.annotations)
+        guard let allVisibleLocations = visibleLocationsManager.allVisibleLocations() else {
+            mapView.removeAnnotations(mapView.annotations)
+            return
+        }
+        
+        var annotationsToRemove = mapView.annotations
+        var locationsToPresent = [CustomLocation]()
+        
+        for location in allVisibleLocations
+        {
+            var selectedAnnotationIndex : Int?
+            for annotationIndex in 0..<annotationsToRemove.count
+            {
+                let annotation = annotationsToRemove[annotationIndex]
+                
+                if annotation.forLocation(location)
+                {
+                    selectedAnnotationIndex = annotationIndex
+                    break
+                }
+            }
+            
+            guard let annotationIndex = selectedAnnotationIndex else {
+                locationsToPresent.append(location)
+                continue
+            }
+            
+            annotationsToRemove.remove(at: annotationIndex)
+        }
+        mapView.removeAnnotations(annotationsToRemove)
+        
+        addAnnotationsForCustomLocations(locationsToPresent)
     }
 }
 
