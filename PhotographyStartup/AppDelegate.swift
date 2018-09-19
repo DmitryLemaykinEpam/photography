@@ -19,10 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         MagicalRecord.setupCoreDataStack()
         
+        UserDefaults.incrementLaunchesCounter()
         if UserDefaults.firstLaunch()
         {
             self.loadDefaultLocatios()
-            UserDefaults.setNotFirstLaunch()
         }
         
         return true

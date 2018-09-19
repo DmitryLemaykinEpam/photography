@@ -15,6 +15,7 @@
 		3F1DFD262147E7F500E6695F /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1DFD252147E7F500E6695F /* MagicalRecord.framework */; };
 		3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */; };
 		3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */; };
+		3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */; };
 		3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9952146603D00020D5D /* AppDelegate.swift */; };
 		3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9972146603D00020D5D /* HomeViewController.swift */; };
 		3F6DB99B2146603D00020D5D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9992146603D00020D5D /* Main.storyboard */; };
@@ -31,7 +32,6 @@
 		3FC4D5B7214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */; };
 		3FC4D5B9214A8D1600D88F17 /* MKAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */; };
 		3FC4D5BB214AB2A100D88F17 /* CoreDataTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */; };
-		3FF60F242146BD530079DB5C /* UserDefaults+FirstLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF60F232146BD530079DB5C /* UserDefaults+FirstLaunch.swift */; };
 		3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF60F252146C4C50079DB5C /* DefaultLocation.swift */; };
 		3FFBEB3A214807AC00F32856 /* LocationDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBEB39214807AC00F32856 /* LocationDetailsViewController.swift */; };
 		3FFBEB3D214807DF00F32856 /* LocationDetailsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FFBEB3C214807DF00F32856 /* LocationDetailsViewController.storyboard */; };
@@ -57,6 +57,7 @@
 		3F1DFD252147E7F500E6695F /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = SOURCE_ROOT; };
 		3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLocationViewModel.swift; sourceTree = "<group>"; };
 		3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
+		3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+LaunchesCounter.swift"; sourceTree = "<group>"; };
 		3F6DB9922146603D00020D5D /* PhotographyStartup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotographyStartup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6DB9952146603D00020D5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3F6DB9972146603D00020D5D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -75,7 +76,6 @@
 		3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKPointAnnotation+CustomLocation.swift"; sourceTree = "<group>"; };
 		3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKAnnotation.swift; sourceTree = "<group>"; };
 		3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTestCase.swift; sourceTree = "<group>"; };
-		3FF60F232146BD530079DB5C /* UserDefaults+FirstLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+FirstLaunch.swift"; sourceTree = "<group>"; };
 		3FF60F252146C4C50079DB5C /* DefaultLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLocation.swift; sourceTree = "<group>"; };
 		3FFBEB39214807AC00F32856 /* LocationDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewController.swift; sourceTree = "<group>"; };
 		3FFBEB3C214807DF00F32856 /* LocationDetailsViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LocationDetailsViewController.storyboard; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 				3F1DFD1B2147B77C00E6695F /* MKMapView+Zoom.swift */,
 				3FFBEB402148172000F32856 /* MKMapView+CoordinatesOfVisibleArea.swift */,
 				3FAC1BC7214935FB007D7B59 /* MKMapView+VisibleAnnotations.swift */,
-				3FF60F232146BD530079DB5C /* UserDefaults+FirstLaunch.swift */,
+				3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */,
 				3FFBEB3E214809FE00F32856 /* UIViewController+Storyboardable.swift */,
 				3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */,
 				3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */,
@@ -337,7 +337,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F1DFD1C2147B77C00E6695F /* MKMapView+Zoom.swift in Sources */,
-				3FF60F242146BD530079DB5C /* UserDefaults+FirstLaunch.swift in Sources */,
 				3FFBEB412148172000F32856 /* MKMapView+CoordinatesOfVisibleArea.swift in Sources */,
 				3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */,
 				3FAC1BCC214942A2007D7B59 /* VisibleLocationsManager.swift in Sources */,
@@ -346,6 +345,7 @@
 				3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */,
 				3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */,
 				3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */,
+				3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */,
 				3FFBEB3F214809FE00F32856 /* UIViewController+Storyboardable.swift in Sources */,
 				3FC4D5B9214A8D1600D88F17 /* MKAnnotation.swift in Sources */,
 				3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */,

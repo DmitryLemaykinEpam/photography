@@ -1,5 +1,5 @@
 //
-//  sfvfv.swift
+//  Storyboardable.swift
 //  PhotographyStartup
 //
 //  Created by Dmitry Lemaykin on 9/11/18.
@@ -21,11 +21,11 @@ extension Storyboardable where Self: UIViewController {
     static func storyboardViewController() -> Self {
         let storyboard = UIStoryboard(name: defaultStoryboardName, bundle: nil)
         
-        guard let vc = storyboard.instantiateInitialViewController() as? Self else {
+        guard let viewController = storyboard.instantiateInitialViewController() as? Self else {
             fatalError("Could not instantiate initial storyboard with name: \(defaultStoryboardName)")
         }
         
-        return vc
+        return viewController
     }
 }
 
