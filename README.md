@@ -1,6 +1,6 @@
 # Photography 
 
-This is a test task application which manage locations presented a Map.
+This is a test task application which manage locations presented on Map.
 
 Assumptions about how users will interact with the app:
 
