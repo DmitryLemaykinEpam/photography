@@ -14,68 +14,24 @@ import MagicalRecord
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    private var applicationCoordinator: ApplicationCoordinator?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         MagicalRecord.setupCoreDataStack()
         
         UserDefaults.incrementLaunchesCounter()
-        if UserDefaults.firstLaunch()
-        {
-            self.loadDefaultLocatios()
-        }
+        
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        self.window = window
+        
+        let applicationCoordinator = ApplicationCoordinator(window: window)
+        self.applicationCoordinator = applicationCoordinator
+        applicationCoordinator.start()
         
         return true
     }
     
-    func loadDefaultLocatios()
-    {
-        guard let filePath = Bundle.main.url(forResource: "DefaultLocations", withExtension: "json") else {
-            return
-        }
-        
-        let fileData : Data!
-        do {
-            fileData = try Data(contentsOf: filePath)
-        }
-        catch
-        {
-            print("Error: \(error.localizedDescription)")
-            return
-        }
- 
-        let decoder = JSONDecoder()
-        
-        do {
-            let defaultLocations = try decoder.decode(DefaultLocations.self, from: fileData)
-            print("Parsed defaultLocations: \(defaultLocations)")
-            
-            for defaultLocation in defaultLocations.locations
-            {
-                guard let newLocation = CustomLocation.mr_createEntity(in: NSManagedObjectContext.mr_default()) else {
-                    return
-                }
-                
-                newLocation.name = "Default \(defaultLocation.name)"
-                newLocation.lat = defaultLocation.lat
-                newLocation.lon = defaultLocation.lng
-            }
-            
-            NSManagedObjectContext.mr_default().mr_saveToPersistentStore { (success, error) in
-                if success == false
-                {
-                    print("Error: \(error.debugDescription)")
-                }
-            }
-            
-        } catch {
-            print("Error trying to convert data to JSON: \(error)")
-            print(error)
-           
-        }
-        
-    }
-
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.

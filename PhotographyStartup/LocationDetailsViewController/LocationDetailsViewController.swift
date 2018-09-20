@@ -9,8 +9,15 @@
 import UIKit
 import MagicalRecord
 
+protocol LocationDetailsViewControllerDelegate : class
+{
+    func locationDetailsViewControllerDidBackAction()
+}
+
 class LocationDetailsViewController: UIViewController
 {
+    weak var delegate: LocationDetailsViewControllerDelegate?
+    
     var location : CustomLocation?
 
     @IBOutlet weak var nameTextField: UITextField!
@@ -60,11 +67,13 @@ class LocationDetailsViewController: UIViewController
         self.present(alertController, animated: true)
     }
     
-    @IBAction func backTap(_ sender: Any) {
-        self.navigateBack()
+    @IBAction func backTap(_ sender: Any)
+    {
+        navigateBack()
     }
     
-    func navigateBack() {
-        self.presentingViewController?.dismiss(animated: true, completion: nil)
+    func navigateBack()
+    {
+        self.delegate?.locationDetailsViewControllerDidBackAction()
     }
 }

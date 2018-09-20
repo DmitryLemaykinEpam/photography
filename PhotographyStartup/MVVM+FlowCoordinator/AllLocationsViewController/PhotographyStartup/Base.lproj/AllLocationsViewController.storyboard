@@ -11,10 +11,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Locations View Controller-->
+        <!--All Locations View Controller-->
         <scene sceneID="0nm-pG-SWf">
             <objects>
-                <viewController id="rra-fb-pgA" customClass="LocationsViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="rra-fb-pgA" customClass="AllLocationsViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rai-kQ-L0U">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

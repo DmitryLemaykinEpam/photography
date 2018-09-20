@@ -10,15 +10,20 @@
 		3F10B0A12146880400D9787F /* DefaultLocations.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F10B0A02146880400D9787F /* DefaultLocations.json */; };
 		3F10B0A22146880400D9787F /* DefaultLocations.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F10B0A02146880400D9787F /* DefaultLocations.json */; };
 		3F1DFD1C2147B77C00E6695F /* MKMapView+Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD1B2147B77C00E6695F /* MKMapView+Zoom.swift */; };
-		3F1DFD1F2147C23C00E6695F /* LocationsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F1DFD1D2147C23C00E6695F /* LocationsViewController.storyboard */; };
-		3F1DFD212147C25C00E6695F /* LocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD202147C25C00E6695F /* LocationsViewController.swift */; };
+		3F1DFD1F2147C23C00E6695F /* AllLocationsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */; };
+		3F1DFD212147C25C00E6695F /* AllLocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */; };
 		3F1DFD262147E7F500E6695F /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1DFD252147E7F500E6695F /* MagicalRecord.framework */; };
 		3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */; };
 		3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */; };
 		3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */; };
+		3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03421526ACA009E0C8E /* Coordinator.swift */; };
+		3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */; };
+		3F34C03B21527AC7009E0C8E /* AllLocationsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */; };
+		3F34C03D2152966B009E0C8E /* UserLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03C2152966B009E0C8E /* UserLocationManager.swift */; };
+		3F34C04121538622009E0C8E /* LocationDetailsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */; };
 		3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9952146603D00020D5D /* AppDelegate.swift */; };
 		3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9972146603D00020D5D /* HomeViewController.swift */; };
-		3F6DB99B2146603D00020D5D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9992146603D00020D5D /* Main.storyboard */; };
+		3F6DB99B2146603D00020D5D /* HomeViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9992146603D00020D5D /* HomeViewController.storyboard */; };
 		3F6DB9A02146603F00020D5D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB99F2146603F00020D5D /* Assets.xcassets */; };
 		3F6DB9A32146603F00020D5D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9A12146603F00020D5D /* LaunchScreen.storyboard */; };
 		3F97ED102149639700C0C85F /* VisibleLocationsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97ED0F2149639700C0C85F /* VisibleLocationsManagerTests.swift */; };
@@ -26,7 +31,7 @@
 		3F97ED13214964EB00C0C85F /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1DFD252147E7F500E6695F /* MagicalRecord.framework */; };
 		3F97ED162149761700C0C85F /* Moc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97ED152149761700C0C85F /* Moc.swift */; };
 		3FAC1BC9214936C6007D7B59 /* MKMapView+VisibleAnnotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC1BC7214935FB007D7B59 /* MKMapView+VisibleAnnotations.swift */; };
-		3FAC1BCC214942A2007D7B59 /* VisibleLocationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC1BCB214942A2007D7B59 /* VisibleLocationsManager.swift */; };
+		3FAC1BCC214942A2007D7B59 /* LocationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */; };
 		3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB99C2146603D00020D5D /* PhotographyStartup.xcdatamodeld */; };
 		3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */; };
 		3FC4D5B7214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */; };
@@ -52,16 +57,21 @@
 /* Begin PBXFileReference section */
 		3F10B0A02146880400D9787F /* DefaultLocations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultLocations.json; sourceTree = "<group>"; };
 		3F1DFD1B2147B77C00E6695F /* MKMapView+Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKMapView+Zoom.swift"; sourceTree = "<group>"; };
-		3F1DFD1E2147C23C00E6695F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = PhotographyStartup/Base.lproj/LocationsViewController.storyboard; sourceTree = "<group>"; };
-		3F1DFD202147C25C00E6695F /* LocationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsViewController.swift; sourceTree = "<group>"; };
+		3F1DFD1E2147C23C00E6695F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = PhotographyStartup/Base.lproj/AllLocationsViewController.storyboard; sourceTree = "<group>"; };
+		3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllLocationsViewController.swift; sourceTree = "<group>"; };
 		3F1DFD252147E7F500E6695F /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = SOURCE_ROOT; };
 		3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLocationViewModel.swift; sourceTree = "<group>"; };
 		3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
 		3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+LaunchesCounter.swift"; sourceTree = "<group>"; };
+		3F34C03421526ACA009E0C8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
+		3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllLocationsCoordinator.swift; sourceTree = "<group>"; };
+		3F34C03C2152966B009E0C8E /* UserLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationManager.swift; sourceTree = "<group>"; };
+		3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsCoordinator.swift; sourceTree = "<group>"; };
 		3F6DB9922146603D00020D5D /* PhotographyStartup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotographyStartup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6DB9952146603D00020D5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3F6DB9972146603D00020D5D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		3F6DB99A2146603D00020D5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3F6DB99A2146603D00020D5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/HomeViewController.storyboard; sourceTree = "<group>"; };
 		3F6DB99D2146603D00020D5D /* PhotographyStartup.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PhotographyStartup.xcdatamodel; sourceTree = "<group>"; };
 		3F6DB99F2146603F00020D5D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3F6DB9A22146603F00020D5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -71,7 +81,7 @@
 		3F97ED0F2149639700C0C85F /* VisibleLocationsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibleLocationsManagerTests.swift; sourceTree = "<group>"; };
 		3F97ED152149761700C0C85F /* Moc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Moc.swift; sourceTree = "<group>"; };
 		3FAC1BC7214935FB007D7B59 /* MKMapView+VisibleAnnotations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKMapView+VisibleAnnotations.swift"; sourceTree = "<group>"; };
-		3FAC1BCB214942A2007D7B59 /* VisibleLocationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibleLocationsManager.swift; sourceTree = "<group>"; };
+		3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsManager.swift; sourceTree = "<group>"; };
 		3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+RemoveObject.swift"; sourceTree = "<group>"; };
 		3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKPointAnnotation+CustomLocation.swift"; sourceTree = "<group>"; };
 		3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKAnnotation.swift; sourceTree = "<group>"; };
@@ -126,15 +136,30 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		3F1DFD272147F51800E6695F /* LocationsViewController */ = {
+		3F1DFD272147F51800E6695F /* AllLocationsViewController */ = {
 			isa = PBXGroup;
 			children = (
-				3F1DFD1D2147C23C00E6695F /* LocationsViewController.storyboard */,
-				3F1DFD202147C25C00E6695F /* LocationsViewController.swift */,
+				3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */,
+				3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */,
+				3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */,
 				3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */,
 				3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */,
 			);
-			path = LocationsViewController;
+			path = AllLocationsViewController;
+			sourceTree = "<group>";
+		};
+		3F34C033215269CF009E0C8E /* MVVM+FlowCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				3F6DB9952146603D00020D5D /* AppDelegate.swift */,
+				3F34C03421526ACA009E0C8E /* Coordinator.swift */,
+				3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */,
+				3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */,
+				3F34C03C2152966B009E0C8E /* UserLocationManager.swift */,
+				3FAC1BCA2149424C007D7B59 /* HomeViewController */,
+				3F1DFD272147F51800E6695F /* AllLocationsViewController */,
+			);
+			path = "MVVM+FlowCoordinator";
 			sourceTree = "<group>";
 		};
 		3F6DB9892146603D00020D5D = {
@@ -160,11 +185,8 @@
 		3F6DB9942146603D00020D5D /* PhotographyStartup */ = {
 			isa = PBXGroup;
 			children = (
-				3F6DB9952146603D00020D5D /* AppDelegate.swift */,
-				3FF60F252146C4C50079DB5C /* DefaultLocation.swift */,
-				3FAC1BCA2149424C007D7B59 /* HomeViewController */,
+				3F34C033215269CF009E0C8E /* MVVM+FlowCoordinator */,
 				3FFBEB3B214807B300F32856 /* LocationDetailsViewController */,
-				3F1DFD272147F51800E6695F /* LocationsViewController */,
 				3F6DB99F2146603F00020D5D /* Assets.xcassets */,
 				3F6DB9A12146603F00020D5D /* LaunchScreen.storyboard */,
 				3F6DB9A42146603F00020D5D /* Info.plist */,
@@ -197,8 +219,8 @@
 			isa = PBXGroup;
 			children = (
 				3F6DB9972146603D00020D5D /* HomeViewController.swift */,
-				3FAC1BCB214942A2007D7B59 /* VisibleLocationsManager.swift */,
-				3F6DB9992146603D00020D5D /* Main.storyboard */,
+				3FF60F252146C4C50079DB5C /* DefaultLocation.swift */,
+				3F6DB9992146603D00020D5D /* HomeViewController.storyboard */,
 			);
 			path = HomeViewController;
 			sourceTree = "<group>";
@@ -206,6 +228,7 @@
 		3FFBEB3B214807B300F32856 /* LocationDetailsViewController */ = {
 			isa = PBXGroup;
 			children = (
+				3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */,
 				3FFBEB39214807AC00F32856 /* LocationDetailsViewController.swift */,
 				3FFBEB3C214807DF00F32856 /* LocationDetailsViewController.storyboard */,
 			);
@@ -295,11 +318,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F6DB9A32146603F00020D5D /* LaunchScreen.storyboard in Resources */,
-				3F1DFD1F2147C23C00E6695F /* LocationsViewController.storyboard in Resources */,
+				3F1DFD1F2147C23C00E6695F /* AllLocationsViewController.storyboard in Resources */,
 				3F6DB9A02146603F00020D5D /* Assets.xcassets in Resources */,
 				3FFBEB3D214807DF00F32856 /* LocationDetailsViewController.storyboard in Resources */,
 				3F10B0A12146880400D9787F /* DefaultLocations.json in Resources */,
-				3F6DB99B2146603D00020D5D /* Main.storyboard in Resources */,
+				3F6DB99B2146603D00020D5D /* HomeViewController.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,17 +362,22 @@
 				3F1DFD1C2147B77C00E6695F /* MKMapView+Zoom.swift in Sources */,
 				3FFBEB412148172000F32856 /* MKMapView+CoordinatesOfVisibleArea.swift in Sources */,
 				3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */,
-				3FAC1BCC214942A2007D7B59 /* VisibleLocationsManager.swift in Sources */,
+				3FAC1BCC214942A2007D7B59 /* LocationsManager.swift in Sources */,
 				3FFBEB3A214807AC00F32856 /* LocationDetailsViewController.swift in Sources */,
-				3F1DFD212147C25C00E6695F /* LocationsViewController.swift in Sources */,
+				3F1DFD212147C25C00E6695F /* AllLocationsViewController.swift in Sources */,
 				3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */,
 				3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */,
+				3F34C04121538622009E0C8E /* LocationDetailsCoordinator.swift in Sources */,
+				3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */,
 				3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */,
 				3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */,
 				3FFBEB3F214809FE00F32856 /* UIViewController+Storyboardable.swift in Sources */,
 				3FC4D5B9214A8D1600D88F17 /* MKAnnotation.swift in Sources */,
 				3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */,
 				3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */,
+				3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */,
+				3F34C03D2152966B009E0C8E /* UserLocationManager.swift in Sources */,
+				3F34C03B21527AC7009E0C8E /* AllLocationsCoordinator.swift in Sources */,
 				3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */,
 				3FAC1BC9214936C6007D7B59 /* MKMapView+VisibleAnnotations.swift in Sources */,
 				3FC4D5B7214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift in Sources */,
@@ -378,20 +406,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3F1DFD1D2147C23C00E6695F /* LocationsViewController.storyboard */ = {
+		3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				3F1DFD1E2147C23C00E6695F /* Base */,
 			);
-			name = LocationsViewController.storyboard;
+			name = AllLocationsViewController.storyboard;
 			sourceTree = "<group>";
 		};
-		3F6DB9992146603D00020D5D /* Main.storyboard */ = {
+		3F6DB9992146603D00020D5D /* HomeViewController.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				3F6DB99A2146603D00020D5D /* Base */,
 			);
-			name = Main.storyboard;
+			name = HomeViewController.storyboard;
 			sourceTree = "<group>";
 		};
 		3F6DB9A12146603F00020D5D /* LaunchScreen.storyboard */ = {

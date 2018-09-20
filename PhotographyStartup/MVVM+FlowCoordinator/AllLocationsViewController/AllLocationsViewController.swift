@@ -1,5 +1,5 @@
 //
-//  LocationsViewController.swift
+//  AllLocationsViewController.swift
 //  PhotographyStartup
 //
 //  Created by Dmitry Lemaykin on 9/11/18.
@@ -10,18 +10,22 @@ import UIKit
 import MapKit
 import MagicalRecord
 
-class LocationsViewController: UIViewController
+protocol AllLocationsViewControllerDelegate : class
 {
+    func allLocationsViewControllerDelegateDidSelectLocation(_ location: CustomLocationViewModel)
+    func allLocationsViewControllerDelegateDidBackAction()
+}
+
+class AllLocationsViewController: UIViewController
+{
+    weak var delegate : AllLocationsViewControllerDelegate?
+    
     @IBOutlet weak var tableView: UITableView!
-    var distanceToLocation : CLLocation?
+    var userCoordinate : CLLocationCoordinate2D?
     
     var customLocationViewModels = [CustomLocationViewModel]()
     
     var fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>()
-    
-    struct Constants {
-        static let LocationCellReuseId = "LocationCellReuseId"
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -29,8 +33,9 @@ class LocationsViewController: UIViewController
         self.reloadLocations()
     }
 
-    @IBAction func backTap(_ sender: Any) {
-        self.presentingViewController?.dismiss(animated: true, completion: nil)
+    @IBAction func backTap(_ sender: Any)
+    {
+        self.delegate?.allLocationsViewControllerDelegateDidBackAction()
     }
     
     func reloadLocations()
@@ -53,15 +58,17 @@ class LocationsViewController: UIViewController
                 viewModels.append(customLocationViewModel)
             }
             
-            guard let fromLocation = self.distanceToLocation else {
+            guard let userCoordinate = self.userCoordinate else {
                 self.didFinishLocationLoading(viewModels: viewModels)
                 return
             }
             
+            let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.latitude)
+            
             for viewModel in viewModels
             {
                 let location = CLLocation(latitude: viewModel.lat!, longitude: viewModel.lon!)
-                let distance : CLLocationDistance = location.distance(from: fromLocation)
+                let distance = location.distance(from: userLocation)
                 viewModel.distance = distance
             }
             
@@ -94,7 +101,7 @@ class LocationsViewController: UIViewController
     }
 }
 
-extension LocationsViewController: NSFetchedResultsControllerDelegate
+extension AllLocationsViewController: NSFetchedResultsControllerDelegate
 {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
     {
@@ -123,8 +130,12 @@ extension LocationsViewController: NSFetchedResultsControllerDelegate
     }
 }
 
-extension LocationsViewController: UITableViewDataSource
+extension AllLocationsViewController: UITableViewDataSource
 {
+    struct Constants {
+        static let LocationCellReuseId = "LocationCellReuseId"
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.customLocationViewModels.count
     }
@@ -149,7 +160,7 @@ extension LocationsViewController: UITableViewDataSource
     }
 }
 
-extension LocationsViewController: UITableViewDelegate
+extension AllLocationsViewController: UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
@@ -157,20 +168,7 @@ extension LocationsViewController: UITableViewDelegate
         
         let viewModel = self.customLocationViewModels[indexPath.row]
         
-        let latFormatted = String(format: "%.16f", viewModel.lat!)
-        let lonFormatted = String(format: "%.16f", viewModel.lon!)
-        
-        let predicate = NSPredicate(format: "name = \"\(viewModel.name!)\" AND lat = \(latFormatted) AND lon = \(lonFormatted)")
-        
-        guard let location = CustomLocation.mr_findFirst(with: predicate) else {
-            print("Error: could not find CustomLocation for ViewModel")
-            return
-        }
-        
-        let detailsViewController = LocationDetailsViewController.storyboardViewController()
-        detailsViewController.location = location
-        
-        self.present(detailsViewController, animated: true, completion: nil)
+        self.delegate?.allLocationsViewControllerDelegateDidSelectLocation(viewModel)
     }
 }
 

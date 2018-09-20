@@ -9,15 +9,21 @@
 import UIKit
 import MapKit
 import MagicalRecord
-import CoreLocation
+
+protocol HomeViewControllerDelegate: class
+{
+    func homeViewControllerDidSelectAllLocation(_ homeViewController: HomeViewController)
+}
 
 class HomeViewController: UIViewController
 {
+    weak var delegate : HomeViewControllerDelegate?
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var mapLongTapGestureRecognizer: UILongPressGestureRecognizer!
     
-    let visibleLocationsManager = VisibleLocationsManager()
-    let userLocationManager = CLLocationManager()
+    var locationsManager : LocationsManager?
+    var userLocationManager : UserLoactionManager?
 
     var selectedLocation : CustomLocation?
     
@@ -30,36 +36,24 @@ class HomeViewController: UIViewController
         super.viewDidLoad()
 
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier:   Constants.CustomAnnotationReuseId)
-        mapView.zoom(toCenterCoordinate: VisibleLocationsManager.Sydney, zoomLevel: 10)
-        
-        visibleLocationsManager.delegate = self
+        mapView.zoom(toCenterCoordinate: LocationsManager.Sydney, zoomLevel: 10)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        userLocationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            userLocationManager.delegate = self
-            userLocationManager.desiredAccuracy = kCLLocationAccuracyBest
-        }
-        
-        if let coor = mapView.userLocation.location?.coordinate{
-            mapView.setCenter(coor, animated: true)
-        }
-        
-        userLocationManager.startUpdatingLocation()
+        userLocationManager?.startTarckingUserLoaction()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        userLocationManager.stopUpdatingLocation()
+        userLocationManager?.stopTarckingUserLoaction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.visibleLocationsManager.fetch()
+        locationsManager?.fetch()
     }
     
     @IBAction func longTapOnMap(_ sender: UILongPressGestureRecognizer)
@@ -78,7 +72,7 @@ class HomeViewController: UIViewController
         
         print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
         
-        guard let newCustomeLocation = visibleLocationsManager.createNewCustomLocation() else {
+        guard let newCustomeLocation = locationsManager?.createNewCustomLocation() else {
             print("Error: could not create location")
             return
         }
@@ -87,17 +81,12 @@ class HomeViewController: UIViewController
         newCustomeLocation.lat = locationCoordinate.latitude
         newCustomeLocation.lon = locationCoordinate.longitude
         
-        visibleLocationsManager.saveToPersistentStore()
+        locationsManager?.saveToPersistentStore()
     }
     
-    @IBAction func allLocationsTap(_ sender: Any) {
-        let loctionsViewController = LocationsViewController.storyboardViewController()
-        
-        loctionsViewController.distanceToLocation = mapView.userLocation.location
-        
-        self.present(loctionsViewController, animated: true) {
-            print("Presented: \(loctionsViewController)")
-        }
+    @IBAction func allLocationsTap(_ sender: Any)
+    {
+        self.delegate?.homeViewControllerDidSelectAllLocation(self)
     }
 }
 
@@ -124,10 +113,12 @@ extension HomeViewController
 
 extension HomeViewController : MKMapViewDelegate
 {
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("mapView: regionDidChangeAnimated")
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool)
+    {
+        let neCoordinate = mapView.getNECoordinate()
+        let swCoordinate = mapView.getSWCoordinate()
         
-        visibleLocationsManager.updatePredicateForVisibleArea(mapView)
+        locationsManager?.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
@@ -159,7 +150,7 @@ extension HomeViewController : MKMapViewDelegate
         let lat = annotation.coordinate.latitude
         let lon = annotation.coordinate.longitude
         
-        self.selectedLocation = visibleLocationsManager.customLocationWith(lat: lat, lon: lon)
+        self.selectedLocation = locationsManager?.customLocationFor(lat: lat, lon: lon)
         guard let selectedLocation = self.selectedLocation else {
             print("Error: don't have selected location")
             return
@@ -186,8 +177,8 @@ extension HomeViewController : MKMapViewDelegate
         alertController.addAction(dafaultAction)
         
         let removeAction = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
-            self.visibleLocationsManager.removeCustomeLocation(lat: customeLocation.lat, lon: customeLocation.lon)
-            self.visibleLocationsManager.saveToPersistentStore()
+            self.locationsManager?.removeCustomeLocation(lat: customeLocation.lat, lon: customeLocation.lon)
+            self.locationsManager?.saveToPersistentStore()
         })
         alertController.addAction(removeAction)
         
@@ -225,7 +216,7 @@ extension HomeViewController : MKMapViewDelegate
             selectedLocation.lat = lat
             selectedLocation.lon = lon
             
-            visibleLocationsManager.saveToPersistentStore()
+            locationsManager?.saveToPersistentStore()
             break
         default:
             // Do nothing
@@ -234,17 +225,6 @@ extension HomeViewController : MKMapViewDelegate
     }
 }
 
-extension HomeViewController : CLLocationManagerDelegate
-{
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-    {
-        let locValue:CLLocationCoordinate2D = manager.location!.coordinate
-        
-        let span = MKCoordinateSpanMake(0.05, 0.05)
-        let region = MKCoordinateRegion(center: locValue, span: span)
-        mapView.setRegion(region, animated: true)
-    }
-}
 
 extension HomeViewController : VisibleLocationsManagerDelegate
 {
@@ -269,7 +249,7 @@ extension HomeViewController : VisibleLocationsManagerDelegate
     
     func reloadAllCustomLocation()
     {
-        guard let allVisibleLocations = visibleLocationsManager.allVisibleLocations() else {
+        guard let allVisibleLocations = locationsManager?.allVisibleLocations() else {
             mapView.removeAnnotations(mapView.annotations)
             return
         }
@@ -301,6 +281,16 @@ extension HomeViewController : VisibleLocationsManagerDelegate
         mapView.removeAnnotations(annotationsToRemove)
         
         addAnnotationsForCustomLocations(locationsToPresent)
+    }
+}
+
+extension HomeViewController : UserLoactionManagerDelegate
+{
+    func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
+    {
+        let span = MKCoordinateSpanMake(0.05, 0.05)
+        let region = MKCoordinateRegion(center: newUserCoordinate, span: span)
+        mapView.setRegion(region, animated: true)
     }
 }
 

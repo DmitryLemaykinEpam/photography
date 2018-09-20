@@ -12,7 +12,7 @@ import MagicalRecord
 
 class VisibleLocationsManagerTests: CoreDataTestCase
 {
-    var visibleLocationsManager : VisibleLocationsManager!
+    var visibleLocationsManager : LocationsManager!
     var mocDelegate : VisibleLocationsManagerDelegate_Moc!
     
     override func setUp() {
@@ -21,7 +21,7 @@ class VisibleLocationsManagerTests: CoreDataTestCase
         mocDelegate = VisibleLocationsManagerDelegate_Moc()
         XCTAssertNotNil(mocDelegate)
 
-        visibleLocationsManager = VisibleLocationsManager()
+        visibleLocationsManager = LocationsManager()
         XCTAssertNotNil(visibleLocationsManager)
         visibleLocationsManager.fetch()
 
