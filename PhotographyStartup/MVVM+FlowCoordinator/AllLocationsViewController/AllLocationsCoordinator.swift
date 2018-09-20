@@ -8,27 +8,27 @@
 
 import UIKit
 
-protocol AllLocationsCoordinatorDelegate : class
+protocol AllLocationsCoordinatorDelegate: class
 {
     func allLocationsCoordinatorDidSelectBackAction(_ coordinator: AllLocationsCoordinator)
 }
 
 class AllLocationsCoordinator: Coordinator
-{
+{    
     weak var delegate : AllLocationsCoordinatorDelegate?
     
     private let presenter: UINavigationController
     
     private let allLocationsManager: LocationsManager
-    private let userLocationManager: UserLoactionManager
+    private let userLocationManager: UserLocationManager
     
-    private var childCoordinators = [Coordinator]()
+    private var locationDetailsCoordinator: LocationDetailsCoordinator?
     
-    init(presenter: UINavigationController, userLoactionManager: UserLoactionManager)
+    init(presenter: UINavigationController, userLocationManager: UserLocationManager)
     {
         self.presenter = presenter
         self.allLocationsManager = LocationsManager()
-        self.userLocationManager = userLoactionManager
+        self.userLocationManager = userLocationManager
     }
     
     func start()
@@ -45,13 +45,13 @@ class AllLocationsCoordinator: Coordinator
         presenter.pushViewController(allLocationsViewController, animated: true)
     }
     
-    func showLocationDetailesViewController(_ location: CustomLocation)
+    func showLocationDetailesViewController(_ location: Location)
     {
         let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter)
         locationDetailsCoordinator.delegate = self
         locationDetailsCoordinator.start()
         
-        childCoordinators.append(locationDetailsCoordinator)
+        self.locationDetailsCoordinator = locationDetailsCoordinator
     }
 }
 
@@ -64,7 +64,7 @@ extension AllLocationsCoordinator: AllLocationsViewControllerDelegate
         
         let predicate = NSPredicate(format: "name = \"\(viewModel.name!)\" AND lat = \(latFormatted) AND lon = \(lonFormatted)")
         
-        guard let location = CustomLocation.mr_findFirst(with: predicate) else {
+        guard let location = Location.mr_findFirst(with: predicate) else {
             print("Error: could not find CustomLocation for ViewModel")
             return
         }
@@ -83,7 +83,6 @@ extension AllLocationsCoordinator: LocationDetailsCoordinatorDelegate
 {
     func locationDetailsCoordinatorCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
     {
-        // TODO: remove exect coordinator
-        childCoordinators.removeAll()
+        locationDetailsCoordinator = nil
     }
 }

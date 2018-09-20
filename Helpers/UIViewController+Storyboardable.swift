@@ -9,11 +9,13 @@
 import Foundation
 import UIKit
 
-protocol Storyboardable: class {
+protocol Storyboardable: class
+{
     static var defaultStoryboardName: String { get }
 }
 
-extension Storyboardable where Self: UIViewController {
+extension Storyboardable where Self: UIViewController
+{
     static var defaultStoryboardName: String {
         return String(describing: self)
     }

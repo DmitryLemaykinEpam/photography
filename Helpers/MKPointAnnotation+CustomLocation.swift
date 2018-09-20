@@ -11,7 +11,7 @@ import MapKit
 
 extension MKPointAnnotation
 {
-    static func createFor(_ customLocation: CustomLocation) -> MKPointAnnotation
+    static func createFor(_ customLocation: Location) -> MKPointAnnotation
     {
         let annotation = MKPointAnnotation()
         annotation.title = customLocation.name

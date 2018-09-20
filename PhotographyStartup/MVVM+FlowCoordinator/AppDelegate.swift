@@ -11,8 +11,8 @@ import CoreData
 import MagicalRecord
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate
+{
     var window: UIWindow?
     private var applicationCoordinator: ApplicationCoordinator?
 

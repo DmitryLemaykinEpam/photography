@@ -11,7 +11,7 @@ import MapKit
 
 extension MKAnnotation
 {
-    func forLocation(_ location: CustomLocation) -> Bool
+    func forLocation(_ location: Location) -> Bool
     {
         if self.title == location.name &&
             self.coordinate.latitude == location.lat &&

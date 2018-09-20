@@ -67,6 +67,5 @@ extension MKMapView {
         let span = self.coordinateSpan(withMapView: self, centerCoordinate: centerCoordinate, zoomLevel: zoomLevel)
         let region = MKCoordinateRegionMake(centerCoordinate, span)
         self.setRegion(region, animated: true)
-        
     }
 }

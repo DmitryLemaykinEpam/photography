@@ -13,19 +13,19 @@ import MagicalRecord
 protocol HomeViewControllerDelegate: class
 {
     func homeViewControllerDidSelectAllLocation(_ homeViewController: HomeViewController)
+    func homeViewControllerDidSelectEditLocation(_ location: Location)
 }
 
 class HomeViewController: UIViewController
 {
+    var viewModel: HomeViewModel?
+
     weak var delegate : HomeViewControllerDelegate?
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var mapLongTapGestureRecognizer: UILongPressGestureRecognizer!
     
-    var locationsManager : LocationsManager?
-    var userLocationManager : UserLoactionManager?
-
-    var selectedLocation : CustomLocation?
+    var selectedLocation: Location?
     
     struct Constants {
         static let CustomAnnotationReuseId = "customAnnotationReuseId"
@@ -34,28 +34,41 @@ class HomeViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-
+        
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier:   Constants.CustomAnnotationReuseId)
         mapView.zoom(toCenterCoordinate: LocationsManager.Sydney, zoomLevel: 10)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool)
+    {
         super.viewDidAppear(animated)
         
-        userLocationManager?.startTarckingUserLoaction()
+        viewModel?.startTarckingUserLoaction()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool)
+    {
         super.viewDidDisappear(animated)
-        userLocationManager?.stopTarckingUserLoaction()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        locationsManager?.fetch()
+        viewModel?.stopTarckingUserLoaction()
     }
     
+    func addAnnotationsForLocations(_ locations : [Location])
+    {
+        var annotations = [MKPointAnnotation]()
+        for location in locations
+        {
+            let annotation = MKPointAnnotation.createFor(location)
+            annotations.append(annotation)
+        }
+        
+        mapView.addAnnotations(annotations)
+    }
+}
+
+//MARK - User actions
+extension HomeViewController
+{
     @IBAction func longTapOnMap(_ sender: UILongPressGestureRecognizer)
     {
         if sender.isEnabled == false
@@ -72,16 +85,16 @@ class HomeViewController: UIViewController
         
         print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
         
-        guard let newCustomeLocation = locationsManager?.createNewCustomLocation() else {
+        guard let newLocation = viewModel?.createNewLocation() else {
             print("Error: could not create location")
             return
         }
         
-        newCustomeLocation.name = "Name is Not Set"
-        newCustomeLocation.lat = locationCoordinate.latitude
-        newCustomeLocation.lon = locationCoordinate.longitude
+        newLocation.name = "Name is Not Set"
+        newLocation.lat = locationCoordinate.latitude
+        newLocation.lon = locationCoordinate.longitude
         
-        locationsManager?.saveToPersistentStore()
+        viewModel?.updateLocationCoordinate(newLocation, newCoordinate: locationCoordinate)
     }
     
     @IBAction func allLocationsTap(_ sender: Any)
@@ -90,27 +103,7 @@ class HomeViewController: UIViewController
     }
 }
 
-extension HomeViewController
-{
-    func addAnnotationForCustomLocation(_ customLocation : CustomLocation)
-    {
-        let annotation = MKPointAnnotation.createFor(customLocation)
-        mapView.addAnnotation(annotation)
-    }
-    
-    func addAnnotationsForCustomLocations(_ customLocations : [CustomLocation])
-    {
-        var annotations = [MKPointAnnotation]()
-        for customLocation in customLocations
-        {
-            let annotation = MKPointAnnotation.createFor(customLocation)
-            annotations.append(annotation)
-        }
-        
-        mapView.addAnnotations(annotations)
-    }
-}
-
+// MARK - MKMapViewDelegate
 extension HomeViewController : MKMapViewDelegate
 {
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool)
@@ -118,7 +111,7 @@ extension HomeViewController : MKMapViewDelegate
         let neCoordinate = mapView.getNECoordinate()
         let swCoordinate = mapView.getSWCoordinate()
         
-        locationsManager?.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
+        viewModel?.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
@@ -140,36 +133,30 @@ extension HomeViewController : MKMapViewDelegate
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
     {
-        print("apView: didSelect")
+        print("MapView: didSelect")
         
         guard let annotation = view.annotation else {
             print("Error: view dont have annotation")
             return
         }
         
-        let lat = annotation.coordinate.latitude
-        let lon = annotation.coordinate.longitude
-        
-        self.selectedLocation = locationsManager?.customLocationFor(lat: lat, lon: lon)
+        self.selectedLocation = viewModel?.locationFor(annotation.coordinate)
         guard let selectedLocation = self.selectedLocation else {
             print("Error: don't have selected location")
             return
         }
         
-        self.showLocationActionSheet(customeLocation: selectedLocation, annotationView: view)
+        self.showLocationActionSheet(location: selectedLocation, annotationView: view)
     }
     
-    func showLocationActionSheet(customeLocation: CustomLocation, annotationView: MKAnnotationView?)
+    func showLocationActionSheet(location: Location, annotationView: MKAnnotationView?)
     {
         let title = "What to do with this location?"
-        let message = "Edit location: \(String(describing: customeLocation.name))?"
+        let message = "Edit location: \(String(describing: location.name))?"
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "Edit", style: .default, handler: { action in
-            let detailsViewController = LocationDetailsViewController.storyboardViewController()
-            detailsViewController.location = customeLocation
-            
-            self.present(detailsViewController, animated: true, completion: nil)
+            self.delegate?.homeViewControllerDidSelectEditLocation(location)
         })
         alertController.addAction(editAction)
         
@@ -177,8 +164,7 @@ extension HomeViewController : MKMapViewDelegate
         alertController.addAction(dafaultAction)
         
         let removeAction = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
-            self.locationsManager?.removeCustomeLocation(lat: customeLocation.lat, lon: customeLocation.lon)
-            self.locationsManager?.saveToPersistentStore()
+            self.viewModel?.removeLocation(location)
         })
         alertController.addAction(removeAction)
         
@@ -202,9 +188,6 @@ extension HomeViewController : MKMapViewDelegate
             return
         }
         
-        let lat = annotation.coordinate.latitude
-        let lon = annotation.coordinate.longitude
-        
         switch newState
         {
         case .ending:
@@ -213,10 +196,7 @@ extension HomeViewController : MKMapViewDelegate
                 return
             }
             
-            selectedLocation.lat = lat
-            selectedLocation.lon = lon
-            
-            locationsManager?.saveToPersistentStore()
+            viewModel?.updateLocationCoordinate(selectedLocation, newCoordinate:annotation.coordinate)
             break
         default:
             // Do nothing
@@ -225,21 +205,20 @@ extension HomeViewController : MKMapViewDelegate
     }
 }
 
-
-extension HomeViewController : VisibleLocationsManagerDelegate
+extension HomeViewController: HomeViewModelDelegate
 {
-    func addCustomLocation(_ newCustomLocation: CustomLocation)
+    func locationAdded(_ location: Location)
     {
-        addAnnotationForCustomLocation(newCustomLocation)
+        addAnnotationsForLocations([location])
     }
-    
-    func removeCustomLocation(_ customLocation: CustomLocation)
+ 
+    func locationRemoved(_ location: Location)
     {
         let visibleAnnotations = mapView.visibleAnnotations()
         
         for annotation in visibleAnnotations
         {
-            if annotation.forLocation(customLocation)
+            if annotation.forLocation(location)
             {
                 mapView.removeAnnotation(annotation)
                 break
@@ -247,17 +226,24 @@ extension HomeViewController : VisibleLocationsManagerDelegate
         }
     }
     
-    func reloadAllCustomLocation()
+    func locationUpdated(_ location: Location, oldCoordinate: CLLocationCoordinate2D, newCoordinate: CLLocationCoordinate2D)
     {
-        guard let allVisibleLocations = locationsManager?.allVisibleLocations() else {
+        // Do nothing, annotation should be already updated
+    }
+
+    func locationsReloaded()
+    {
+        guard let visibleLocations = self.viewModel?.visibleLocations(), visibleLocations.count != 0 else {
             mapView.removeAnnotations(mapView.annotations)
             return
         }
         
+        // Will try to reuse as much existed annotations as possible,
+        // this optimisation provide faster reload of annotations when user movign map
         var annotationsToRemove = mapView.annotations
-        var locationsToPresent = [CustomLocation]()
+        var locationsToPresent = [Location]()
         
-        for location in allVisibleLocations
+        for location in visibleLocations
         {
             var selectedAnnotationIndex : Int?
             for annotationIndex in 0..<annotationsToRemove.count
@@ -280,12 +266,9 @@ extension HomeViewController : VisibleLocationsManagerDelegate
         }
         mapView.removeAnnotations(annotationsToRemove)
         
-        addAnnotationsForCustomLocations(locationsToPresent)
+        addAnnotationsForLocations(locationsToPresent)
     }
-}
-
-extension HomeViewController : UserLoactionManagerDelegate
-{
+    
     func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
     {
         let span = MKCoordinateSpanMake(0.05, 0.05)

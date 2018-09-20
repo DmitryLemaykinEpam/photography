@@ -21,6 +21,8 @@
 		3F34C03B21527AC7009E0C8E /* AllLocationsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */; };
 		3F34C03D2152966B009E0C8E /* UserLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03C2152966B009E0C8E /* UserLocationManager.swift */; };
 		3F34C04121538622009E0C8E /* LocationDetailsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */; };
+		3F34C04321539F05009E0C8E /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04221539F05009E0C8E /* HomeCoordinator.swift */; };
+		3F34C0452153B2F3009E0C8E /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */; };
 		3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9952146603D00020D5D /* AppDelegate.swift */; };
 		3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9972146603D00020D5D /* HomeViewController.swift */; };
 		3F6DB99B2146603D00020D5D /* HomeViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9992146603D00020D5D /* HomeViewController.storyboard */; };
@@ -35,7 +37,7 @@
 		3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB99C2146603D00020D5D /* PhotographyStartup.xcdatamodeld */; };
 		3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */; };
 		3FC4D5B7214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */; };
-		3FC4D5B9214A8D1600D88F17 /* MKAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */; };
+		3FC4D5B9214A8D1600D88F17 /* MKAnnotation+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */; };
 		3FC4D5BB214AB2A100D88F17 /* CoreDataTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */; };
 		3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF60F252146C4C50079DB5C /* DefaultLocation.swift */; };
 		3FFBEB3A214807AC00F32856 /* LocationDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBEB39214807AC00F32856 /* LocationDetailsViewController.swift */; };
@@ -68,6 +70,8 @@
 		3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllLocationsCoordinator.swift; sourceTree = "<group>"; };
 		3F34C03C2152966B009E0C8E /* UserLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationManager.swift; sourceTree = "<group>"; };
 		3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsCoordinator.swift; sourceTree = "<group>"; };
+		3F34C04221539F05009E0C8E /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
+		3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		3F6DB9922146603D00020D5D /* PhotographyStartup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotographyStartup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6DB9952146603D00020D5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3F6DB9972146603D00020D5D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -84,7 +88,7 @@
 		3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsManager.swift; sourceTree = "<group>"; };
 		3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+RemoveObject.swift"; sourceTree = "<group>"; };
 		3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKPointAnnotation+CustomLocation.swift"; sourceTree = "<group>"; };
-		3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKAnnotation.swift; sourceTree = "<group>"; };
+		3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKAnnotation+Location.swift"; sourceTree = "<group>"; };
 		3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTestCase.swift; sourceTree = "<group>"; };
 		3FF60F252146C4C50079DB5C /* DefaultLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLocation.swift; sourceTree = "<group>"; };
 		3FFBEB39214807AC00F32856 /* LocationDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewController.swift; sourceTree = "<group>"; };
@@ -131,7 +135,7 @@
 				3FFBEB3E214809FE00F32856 /* UIViewController+Storyboardable.swift */,
 				3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */,
 				3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */,
-				3FC4D5B8214A8D1600D88F17 /* MKAnnotation.swift */,
+				3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -218,6 +222,8 @@
 		3FAC1BCA2149424C007D7B59 /* HomeViewController */ = {
 			isa = PBXGroup;
 			children = (
+				3F34C04221539F05009E0C8E /* HomeCoordinator.swift */,
+				3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */,
 				3F6DB9972146603D00020D5D /* HomeViewController.swift */,
 				3FF60F252146C4C50079DB5C /* DefaultLocation.swift */,
 				3F6DB9992146603D00020D5D /* HomeViewController.storyboard */,
@@ -372,11 +378,13 @@
 				3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */,
 				3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */,
 				3FFBEB3F214809FE00F32856 /* UIViewController+Storyboardable.swift in Sources */,
-				3FC4D5B9214A8D1600D88F17 /* MKAnnotation.swift in Sources */,
+				3FC4D5B9214A8D1600D88F17 /* MKAnnotation+Location.swift in Sources */,
 				3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */,
 				3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */,
+				3F34C04321539F05009E0C8E /* HomeCoordinator.swift in Sources */,
 				3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */,
 				3F34C03D2152966B009E0C8E /* UserLocationManager.swift in Sources */,
+				3F34C0452153B2F3009E0C8E /* HomeViewModel.swift in Sources */,
 				3F34C03B21527AC7009E0C8E /* AllLocationsCoordinator.swift in Sources */,
 				3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */,
 				3FAC1BC9214936C6007D7B59 /* MKMapView+VisibleAnnotations.swift in Sources */,

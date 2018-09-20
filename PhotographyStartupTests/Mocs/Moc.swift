@@ -9,7 +9,7 @@
 import XCTest
 @testable import PhotographyStartup
 
-class VisibleLocationsManagerDelegate_Moc : VisibleLocationsManagerDelegate
+class VisibleLocationsManagerDelegate_Moc : LocationsManagerDelegate
 {
     var expectation : XCTestExpectation?
     

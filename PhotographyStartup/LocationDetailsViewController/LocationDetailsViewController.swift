@@ -9,7 +9,7 @@
 import UIKit
 import MagicalRecord
 
-protocol LocationDetailsViewControllerDelegate : class
+protocol LocationDetailsViewControllerDelegate: class
 {
     func locationDetailsViewControllerDidBackAction()
 }
@@ -18,7 +18,7 @@ class LocationDetailsViewController: UIViewController
 {
     weak var delegate: LocationDetailsViewControllerDelegate?
     
-    var location : CustomLocation?
+    var location: Location?
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!

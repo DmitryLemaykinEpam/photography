@@ -13,12 +13,10 @@ class ApplicationCoordinator: Coordinator
     let window: UIWindow
     fileprivate let rootViewController: UINavigationController
     
-    fileprivate var homeViewController: HomeViewController?
-    
-    fileprivate var childCoordinators = [Coordinator]()
+    fileprivate var homeCoordinator: HomeCoordinator?
     
     fileprivate var locationsManager = LocationsManager()
-    fileprivate let userLoactionManager = UserLoactionManager()
+    fileprivate let userLocationManager = UserLocationManager()
     
     init(window: UIWindow)
     {
@@ -38,46 +36,19 @@ class ApplicationCoordinator: Coordinator
     
     func showHomeViewController()
     {
-        let homeViewController = HomeViewController.storyboardViewController()
-        homeViewController.locationsManager = self.locationsManager       
-        homeViewController.delegate = self
+        let homeCoordinator = HomeCoordinator(presenter: rootViewController, userLocationManager: userLocationManager, locationsManager: locationsManager)
+        homeCoordinator.delegate = self
+        homeCoordinator.start()
         
-        self.locationsManager.delegate = homeViewController
-        
-        rootViewController.pushViewController(homeViewController, animated: true)
-        
-        self.homeViewController = homeViewController
-    }
-    
-    func showAllLocationsViewController()
-    {
-        let allLocationsCoordinator = AllLocationsCoordinator(presenter: rootViewController, userLoactionManager: userLoactionManager)
-        allLocationsCoordinator.delegate = self
-        allLocationsCoordinator.start()
-        childCoordinators.append(allLocationsCoordinator)
-    }
-    
-    func dismissChildCoordinator(_ coordinator: Coordinator)
-    {
-        // TODO remove exectly coordinator
-        childCoordinators.removeFirst()
+        self.homeCoordinator = homeCoordinator
     }
 }
 
-// MARK: - HomeViewControllerDelegate
-extension ApplicationCoordinator: HomeViewControllerDelegate
+// MARK: - HomeCoordinatorDelegate
+extension ApplicationCoordinator: HomeCoordinatorDelegate
 {
-    func homeViewControllerDidSelectAllLocation(_ homeViewController: HomeViewController)
+    func homeCoordinatorDidFinish(_ coordinator: HomeCoordinator)
     {
-        showAllLocationsViewController()
-    }
-}
-
-// MARK: - AllLocationsCoordinatorDelegate
-extension ApplicationCoordinator: AllLocationsCoordinatorDelegate
-{
-    func allLocationsCoordinatorDidSelectBackAction(_ coordinator: AllLocationsCoordinator)
-    {
-        dismissChildCoordinator(coordinator)
+        homeCoordinator = nil
     }
 }

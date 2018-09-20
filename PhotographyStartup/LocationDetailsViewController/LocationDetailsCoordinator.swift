@@ -38,6 +38,13 @@ class LocationDetailsCoordinator: Coordinator
     }
 }
 
+extension LocationDetailsCoordinator: Equatable
+{
+    static func == (lhs: LocationDetailsCoordinator, rhs: LocationDetailsCoordinator) -> Bool {
+        return lhs == rhs
+    }
+}
+
 extension LocationDetailsCoordinator: LocationDetailsViewControllerDelegate
 {
     func locationDetailsViewControllerDidBackAction()

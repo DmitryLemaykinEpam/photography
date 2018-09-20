@@ -18,10 +18,10 @@ protocol AllLocationsViewControllerDelegate : class
 
 class AllLocationsViewController: UIViewController
 {
-    weak var delegate : AllLocationsViewControllerDelegate?
+    weak var delegate: AllLocationsViewControllerDelegate?
     
     @IBOutlet weak var tableView: UITableView!
-    var userCoordinate : CLLocationCoordinate2D?
+    var userCoordinate: CLLocationCoordinate2D?
     
     var customLocationViewModels = [CustomLocationViewModel]()
     
@@ -42,7 +42,7 @@ class AllLocationsViewController: UIViewController
     {
         DispatchQueue.global(qos: .userInitiated).async
         {
-            guard let allCustomLocations = CustomLocation.mr_findAll() as? [CustomLocation] else {
+            guard let allCustomLocations = Location.mr_findAll() as? [Location] else {
                 self.didFinishLocationLoading(viewModels: nil)
                 return
             }

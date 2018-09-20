@@ -10,18 +10,19 @@ import UIKit
 import MapKit
 import MagicalRecord
 
-protocol VisibleLocationsManagerDelegate
+protocol LocationsManagerDelegate
 {
-    func addCustomLocation(_ newCustomLocation: CustomLocation)
-    func removeCustomLocation(_ customLocation: CustomLocation)
-    func reloadAllCustomLocation()
+    func locationAdded(_ location: Location)
+    func locationUpdated(_ location: Location)
+    func locationRemoved(_ location: Location)
+    func locationsReloaded()
 }
 
 class LocationsManager : NSObject
 {
     static let Sydney = CLLocationCoordinate2DMake(-33.859823878555, 151.223348920464)
     
-    var delegate: VisibleLocationsManagerDelegate?
+    var delegate: LocationsManagerDelegate?
     
     override init()
     {
@@ -57,7 +58,7 @@ class LocationsManager : NSObject
             
             for defaultLocation in defaultLocations.locations
             {
-                guard let newLocation = CustomLocation.mr_createEntity(in: NSManagedObjectContext.mr_default()) else {
+                guard let newLocation = Location.mr_createEntity(in: NSManagedObjectContext.mr_default()) else {
                     return
                 }
                 
@@ -83,22 +84,23 @@ class LocationsManager : NSObject
     private lazy var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult> = {
         let context = NSManagedObjectContext.mr_default()
         
-        let fetchRequest = CustomLocation.mr_requestAllSorted(by: "name", ascending: false, in: context)
+        let fetchRequest = Location.mr_requestAllSorted(by: "name", ascending: false, in: context)
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
     
-    func createNewCustomLocation() -> CustomLocation?
+    func createNewCustomLocation() -> Location?
     {
         let context = NSManagedObjectContext.mr_default()
 
-        guard let newCustomLocation = CustomLocation.mr_createEntity(in: context) else {
+        guard let newLocation = Location.mr_createEntity(in: context) else {
             print("Error: New CustomLocation could not be created")
             return nil
         }
 
+        // Recommended but less convenient
 //        var newCustomLocation : CustomLocation?
 //        MagicalRecord.save(blockAndWait: { (context) in
 //            guard let customLocation = CustomLocation.mr_createEntity(in: context) else {
@@ -109,10 +111,10 @@ class LocationsManager : NSObject
 //            newCustomLocation = customLocation
 //        })
         
-        return newCustomLocation
+        return newLocation
     }
     
-    // fetchedResultsController need to fetch at leas once to start receave changes in context
+    // fetchedResultsController need to performFetch at least once to start to receive changes in context
     func fetch()
     {
         do
@@ -126,24 +128,20 @@ class LocationsManager : NSObject
         
         print("Fetched count:\(String(describing: self.fetchedResultsController.fetchedObjects?.count))")
         
-        self.delegate?.reloadAllCustomLocation()
+        self.delegate?.locationsReloaded()
     }
     
-    func removeCustomeLocation(lat: Double, lon: Double)
+    func removeLocation(_ location: Location)
     {
-        guard let locationToDelete = customLocationFor(lat: lat, lon: lon) else {
-            print("Error: don't find location to delete")
-            return
-        }
         let context = NSManagedObjectContext.mr_default()
-        let deletionResult = locationToDelete.mr_deleteEntity(in: context)
+        let deletionResult = location.mr_deleteEntity(in: context)
         if deletionResult == false {
             print("Error: Could not delete selected location")
             return
         }
     }
     
-    func customLocationFor(lat: Double, lon: Double) -> CustomLocation?
+    func locationFor(_ coordinate: CLLocationCoordinate2D) -> Location?
     {
         guard let fetchRequestResults = fetchedResultsController.fetchedObjects else {
             return nil
@@ -151,12 +149,13 @@ class LocationsManager : NSObject
         
         for fetchRequestResult in fetchRequestResults
         {
-            guard let location = fetchRequestResult as? CustomLocation else {
+            guard let location = fetchRequestResult as? Location else {
                 print("Error: Could not cast fetchRequestResult to CustomLocation")
                 return nil
             }
             
-            if location.lat == lat && location.lon == lon
+            if location.lat == coordinate.latitude &&
+               location.lon == coordinate.longitude
             {
                 return location
             }
@@ -175,16 +174,21 @@ extension LocationsManager : NSFetchedResultsControllerDelegate
 {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
     {
+        guard let location = anObject as? Location else {
+            print("Error: anObject is not a Loaction")
+            return
+        }
+        
         switch type
         {
         case .insert:
-            self.delegate?.addCustomLocation(anObject as! CustomLocation)
+            self.delegate?.locationAdded(location)
             break
         case .delete:
-            self.delegate?.removeCustomLocation(anObject as! CustomLocation)
+            self.delegate?.locationRemoved(location)
             break
         case .update:
-            
+            self.delegate?.locationUpdated(location)
             break
             
         default:
@@ -197,9 +201,9 @@ extension LocationsManager : NSFetchedResultsControllerDelegate
 // MARK: - VisibleLocations
 extension LocationsManager
 {
-    func allVisibleLocations() -> [CustomLocation]?
+    func visibleLocations() -> [Location]?
     {
-        guard let fetchedLocations = fetchedResultsController.fetchedObjects as? [CustomLocation] else {
+        guard let fetchedLocations = fetchedResultsController.fetchedObjects as? [Location] else {
             return nil
         }
         

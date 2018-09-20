@@ -9,14 +9,14 @@
 import Foundation
 import CoreLocation
 
-protocol UserLoactionManagerDelegate : class
+protocol UserLocationManagerDelegate : class
 {
     func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
 }
 
-class UserLoactionManager: NSObject
+class UserLocationManager: NSObject
 {
-    weak var delegate: UserLoactionManagerDelegate?
+    weak var delegate: UserLocationManagerDelegate?
     
     private lazy var clLocationManager = CLLocationManager()
     
@@ -47,7 +47,7 @@ class UserLoactionManager: NSObject
     }
 }
 
-extension UserLoactionManager : CLLocationManagerDelegate
+extension UserLocationManager : CLLocationManagerDelegate
 {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
