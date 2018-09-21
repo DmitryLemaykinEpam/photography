@@ -1,0 +1,11 @@
+framework module ReactiveKit {
+  umbrella header "ReactiveKit.h"
+
+  export *
+  module * { export * }
+}
+
+module ReactiveKit.Swift {
+    header "ReactiveKit-Swift.h"
+    requires objc
+}

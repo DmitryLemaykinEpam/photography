@@ -9,10 +9,10 @@
 import UIKit
 import MapKit
 
-class CustomLocationViewModel
+class LocationViewModel
 {
-    var name : String?
-    var lat : Double?
-    var lon : Double?
-    var distance : Double?
+    var name: String?
+    var coordinate: CLLocationCoordinate2D?
+    var note: String?
+    var distance: Double?
 }
