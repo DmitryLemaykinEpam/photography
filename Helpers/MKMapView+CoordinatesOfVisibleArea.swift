@@ -13,31 +13,25 @@ extension MKMapView
 {
     func getNECoordinate() -> CLLocationCoordinate2D {
         let mRect = self.visibleMapRect
-        let coordinate = self.getCoordinateFromMapRectanglePoint(x: MKMapRectGetMaxX(mRect), y:mRect.origin.y)
+        let coordinate = MKMapPoint(x: mRect.maxX, y:mRect.origin.y).coordinate
         return coordinate
     }
     
     func getNWCoordinate() -> CLLocationCoordinate2D {
         let mRect = self.visibleMapRect
-        let coordinate = self.getCoordinateFromMapRectanglePoint(x: MKMapRectGetMinX(mRect), y:mRect.origin.y)
+        let coordinate = MKMapPoint(x: mRect.midX, y:mRect.origin.y).coordinate
         return coordinate
     }
     
     func getSECoordinate() -> CLLocationCoordinate2D {
         let mRect = self.visibleMapRect
-        let coordinate = self.getCoordinateFromMapRectanglePoint(x: MKMapRectGetMaxX(mRect), y:MKMapRectGetMaxY(mRect))
+        let coordinate = MKMapPoint(x: mRect.maxX, y: mRect.maxY).coordinate
         return coordinate
     }
 
     func getSWCoordinate() -> CLLocationCoordinate2D {
         let mRect = self.visibleMapRect
-        let coordinate = self.getCoordinateFromMapRectanglePoint(x: mRect.origin.x, y:MKMapRectGetMaxY(mRect))
+        let coordinate = MKMapPoint(x: mRect.origin.x, y: mRect.maxY).coordinate
         return coordinate
-    }
-    
-    func getCoordinateFromMapRectanglePoint(x: Double, y: Double) -> CLLocationCoordinate2D {
-        let mapPoint = MKMapPointMake(x, y)
-        let locationCoordinate = MKCoordinateForMapPoint(mapPoint)
-        return locationCoordinate
     }
 }

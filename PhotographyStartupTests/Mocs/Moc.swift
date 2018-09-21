@@ -11,28 +11,32 @@ import XCTest
 
 class VisibleLocationsManagerDelegate_Moc : LocationsManagerDelegate
 {
-    var expectation : XCTestExpectation?
+    var location : Location?
     
-    var didCall_addCustomLocation = false
-    var didCall_removeCustomLocation = false
-    var didCall_reloadAllCustomLocation = false
+    var didCall_locationAdded = false
+    var didCall_locationRemoved = false
+    var didCall_locationsReloaded = false
+    var didCall_locationUpdated = false
     
-    var customLocation : CustomLocation?
-    
-    func addCustomLocation(_ newCustomLocation: CustomLocation) {
-        didCall_addCustomLocation = true
-        self.customLocation = newCustomLocation
-        expectation?.fulfill()
+    func locationAdded(_ location: Location)
+    {
+        didCall_locationAdded = true
+        self.location = location
     }
     
-    func removeCustomLocation(_ customLocation: CustomLocation) {
-        didCall_removeCustomLocation = true
-        self.customLocation = customLocation
-        expectation?.fulfill()
+    func locationUpdated(_ location: Location)
+    {
+        didCall_locationUpdated = true
+        self.location = location
     }
     
-    func reloadAllCustomLocation() {
-        didCall_reloadAllCustomLocation = false
-        expectation?.fulfill()
+    func locationRemoved(_ location: Location)
+    {
+        didCall_locationRemoved = true
+        self.location = location
+    }
+    
+    func locationsReloaded() {
+        didCall_locationsReloaded = true
     }
 }

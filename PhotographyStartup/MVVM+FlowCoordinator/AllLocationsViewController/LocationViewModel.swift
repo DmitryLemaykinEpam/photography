@@ -9,10 +9,17 @@
 import UIKit
 import MapKit
 
+protocol LocationViewModelDelegate: class
+{
+    func locationViewModelDidChange(_ locationViewModel: LocationViewModel)
+}
+
 class LocationViewModel
 {
+    weak var delegate: LocationViewModelDelegate?
+    
     var name: String?
     var coordinate: CLLocationCoordinate2D?
-    var note: String?
-    var distance: Double?
+    var notes: String?
+    var distance: String = ""
 }

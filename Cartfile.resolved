@@ -1,1 +1,4 @@
+github "DeclarativeHub/Bond" "6.10.0"
+github "DeclarativeHub/ReactiveKit" "v3.9.6"
 github "MagicalPanda/MagicalRecord" "v2.3.3"
+github "tonyarnold/Differ" "1.2.3"

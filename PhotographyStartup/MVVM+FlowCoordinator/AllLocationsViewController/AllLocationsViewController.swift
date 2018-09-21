@@ -8,125 +8,62 @@
 
 import UIKit
 import MapKit
-import MagicalRecord
+import Bond
 
 protocol AllLocationsViewControllerDelegate : class
 {
-    func allLocationsViewControllerDelegateDidSelectLocation(_ location: CustomLocationViewModel)
+    func allLocationsViewControllerDelegateDidSelectLocation(_ location: LocationViewModel)
     func allLocationsViewControllerDelegateDidBackAction()
 }
 
 class AllLocationsViewController: UIViewController
 {
+    var viewModel: AllLocationsViewModel!
     weak var delegate: AllLocationsViewControllerDelegate?
     
     @IBOutlet weak var tableView: UITableView!
-    var userCoordinate: CLLocationCoordinate2D?
     
-    var customLocationViewModels = [CustomLocationViewModel]()
+    override func viewDidLoad()
+    {
+        super.viewDidLoad()
+        
+        bindViewModel()
+    }
     
-    var fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>()
+    func bindViewModel()
+    {
+        viewModel.locationViewModels.bind(to: self) { strongSelf, _ in
+            strongSelf.tableView.reloadData()
+        }
+        
+        viewModel.userCoordinate.bind(to: self) { strongSelf, coordinate in
+            print("Coordinate: ", String(describing: coordinate))
+        }
+    }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool)
+    {
         super.viewWillAppear(animated)
         
-        self.reloadLocations()
-    }
-
-    @IBAction func backTap(_ sender: Any)
-    {
-        self.delegate?.allLocationsViewControllerDelegateDidBackAction()
+        viewModel.fetch()
+        viewModel?.startTrackingUserLoaction()
     }
     
-    func reloadLocations()
+    override func viewWillDisappear(_ animated: Bool)
     {
-        DispatchQueue.global(qos: .userInitiated).async
-        {
-            guard let allCustomLocations = Location.mr_findAll() as? [Location] else {
-                self.didFinishLocationLoading(viewModels: nil)
-                return
-            }
-            
-            var viewModels = [CustomLocationViewModel]()
-            for customLocation in allCustomLocations
-            {
-                let customLocationViewModel = CustomLocationViewModel()
-                customLocationViewModel.name = customLocation.name
-                customLocationViewModel.lat = customLocation.lat
-                customLocationViewModel.lon = customLocation.lon
-                
-                viewModels.append(customLocationViewModel)
-            }
-            
-            guard let userCoordinate = self.userCoordinate else {
-                self.didFinishLocationLoading(viewModels: viewModels)
-                return
-            }
-            
-            let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.latitude)
-            
-            for viewModel in viewModels
-            {
-                let location = CLLocation(latitude: viewModel.lat!, longitude: viewModel.lon!)
-                let distance = location.distance(from: userLocation)
-                viewModel.distance = distance
-            }
-            
-            viewModels.sort(by: { (viewModel1, viewModel2) -> Bool in
-                guard let distance1 = viewModel1.distance, let distance2 = viewModel2.distance else {
-                    return false
-                }
-                
-                if distance1 < distance2 {
-                    return true
-                } else {
-                    return false
-                }
-            })
-            
-            self.didFinishLocationLoading(viewModels: viewModels)
-        }
-    }
-    
-    func didFinishLocationLoading(viewModels: [CustomLocationViewModel]?)
-    {
-        DispatchQueue.main.async {
-            guard let viewModels = viewModels else {
-                return
-            }
-            
-            self.customLocationViewModels = viewModels
-            self.tableView.reloadData()
-        }
+        super.viewWillDisappear(animated)
+        
+        viewModel.fetch()
+        viewModel?.stopTrackingUserLoaction()
     }
 }
 
-extension AllLocationsViewController: NSFetchedResultsControllerDelegate
+// MARK: - User Actions
+extension AllLocationsViewController
 {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    @IBAction func backTap(_ sender: Any)
     {
-        self.tableView.beginUpdates();
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
-    {
-        switch type
-        {
-        case .insert:
-            guard let newIndexPath = newIndexPath else {
-                return
-            }
-            
-            self.tableView.insertRows(at: [newIndexPath], with: .fade)
-            break
-        case .delete: break
-        case .move: break
-        case .update: break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.tableView.endUpdates()
+        self.delegate?.allLocationsViewControllerDelegateDidBackAction()
     }
 }
 
@@ -136,27 +73,30 @@ extension AllLocationsViewController: UITableViewDataSource
         static let LocationCellReuseId = "LocationCellReuseId"
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.customLocationViewModels.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return self.viewModel.locationViewModels.value.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.LocationCellReuseId) as? LocationTableViewCell else {
             return UITableViewCell()
         }
         
-        let viewModel = self.customLocationViewModels[indexPath.row]
-        cell.textLabel?.text = viewModel.name
-
-        guard let distance = viewModel.distance else {
-            cell.distanceLabel.text = "0"
-            return cell
-        }
-        let distanceFormatter = MKDistanceFormatter()
-        let distanceString = distanceFormatter.string(fromDistance: distance)
-
-        cell.distanceLabel.text = distanceString
+        let locationViewModel = viewModel.locationViewModels.value[indexPath.row]
+  
+        cunfigureCellWithViewModel(cell, viewModel: locationViewModel)
+        
         return cell
+    }
+    
+    func cunfigureCellWithViewModel(_ cell: LocationTableViewCell, viewModel: LocationViewModel)
+    {
+        cell.textLabel?.text    = viewModel.name
+        cell.distanceLabel.text = viewModel.distance
+        
+        viewModel.delegate = cell
     }
 }
 
@@ -166,7 +106,7 @@ extension AllLocationsViewController: UITableViewDelegate
     {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let viewModel = self.customLocationViewModels[indexPath.row]
+        let viewModel = self.viewModel.locationViewModels.value[indexPath.row]
         
         self.delegate?.allLocationsViewControllerDelegateDidSelectLocation(viewModel)
     }

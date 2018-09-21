@@ -51,7 +51,7 @@ class HomeCoordinator: Coordinator
     
     func showAllLocationsViewController()
     {
-        let allLocationsCoordinator = AllLocationsCoordinator(presenter: presenter, userLocationManager: userLocationManager)
+        let allLocationsCoordinator = AllLocationsCoordinator(presenter: presenter, locationsManager: locationsManager, userLocationManager: userLocationManager)
         allLocationsCoordinator.delegate = self
         allLocationsCoordinator.start()
         

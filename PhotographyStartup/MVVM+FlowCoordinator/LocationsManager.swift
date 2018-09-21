@@ -20,8 +20,6 @@ protocol LocationsManagerDelegate
 
 class LocationsManager : NSObject
 {
-    static let Sydney = CLLocationCoordinate2DMake(-33.859823878555, 151.223348920464)
-    
     var delegate: LocationsManagerDelegate?
     
     override init()
@@ -91,7 +89,7 @@ class LocationsManager : NSObject
         return fetchedResultsController
     }()
     
-    func createNewCustomLocation() -> Location?
+    func createLocation() -> Location?
     {
         let context = NSManagedObjectContext.mr_default()
 
@@ -100,7 +98,7 @@ class LocationsManager : NSObject
             return nil
         }
 
-        // Recommended but less convenient
+        // Recomended but less convenient
 //        var newCustomLocation : CustomLocation?
 //        MagicalRecord.save(blockAndWait: { (context) in
 //            guard let customLocation = CustomLocation.mr_createEntity(in: context) else {
@@ -164,7 +162,8 @@ class LocationsManager : NSObject
         return nil
     }
     
-    func saveToPersistentStore() {
+    func saveToPersistentStore()
+    {
         let context = NSManagedObjectContext.mr_default()
         context.mr_saveToPersistentStoreAndWait()
     }

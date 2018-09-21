@@ -58,14 +58,14 @@ extension MKMapView {
         let maxLat = pixelSpaceYToLatitude(pixelY: topLeftPixelY + scaledMapHeight)
         let latitudeDelta = -1 * (maxLat - minLat);
         
-        let span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta)
+        let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
         return span
     }
     
     func zoom(toCenterCoordinate centerCoordinate:CLLocationCoordinate2D, zoomLevel: UInt) {
         let zoomLevel = min(zoomLevel, 20)
         let span = self.coordinateSpan(withMapView: self, centerCoordinate: centerCoordinate, zoomLevel: zoomLevel)
-        let region = MKCoordinateRegionMake(centerCoordinate, span)
+        let region = MKCoordinateRegion(center: centerCoordinate, span: span)
         self.setRegion(region, animated: true)
     }
 }

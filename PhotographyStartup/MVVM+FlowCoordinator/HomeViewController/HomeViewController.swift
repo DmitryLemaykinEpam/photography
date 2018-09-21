@@ -8,7 +8,6 @@
 
 import UIKit
 import MapKit
-import MagicalRecord
 
 protocol HomeViewControllerDelegate: class
 {
@@ -18,9 +17,9 @@ protocol HomeViewControllerDelegate: class
 
 class HomeViewController: UIViewController
 {
-    var viewModel: HomeViewModel?
+    var viewModel: HomeViewModel!
 
-    weak var delegate : HomeViewControllerDelegate?
+    weak var delegate: HomeViewControllerDelegate?
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var mapLongTapGestureRecognizer: UILongPressGestureRecognizer!
@@ -35,8 +34,25 @@ class HomeViewController: UIViewController
     {
         super.viewDidLoad()
         
-        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier:   Constants.CustomAnnotationReuseId)
-        mapView.zoom(toCenterCoordinate: LocationsManager.Sydney, zoomLevel: 10)
+        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: Constants.CustomAnnotationReuseId)
+        //mapView.zoom(toCenterCoordinate: viewModel.userCoordinate, zoomLevel: 10)
+        
+        bindViewModel()
+    }
+    
+    func bindViewModel()
+    {
+        viewModel.userCoordinate.bind(to: self) { strongSelf, userCoordinate in
+            print("userCoordinate: ", String(describing: userCoordinate))
+            
+            guard let userCoordinate = userCoordinate else {
+                return
+            }
+            
+            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            let region = MKCoordinateRegion(center: userCoordinate, span: span)
+            self.mapView.setRegion(region, animated: true)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -50,7 +66,7 @@ class HomeViewController: UIViewController
     {
         super.viewDidDisappear(animated)
         
-        viewModel?.stopTarckingUserLoaction()
+        //viewModel?.stopTarckingUserLoaction()
     }
     
     func addAnnotationsForLocations(_ locations : [Location])
@@ -181,7 +197,7 @@ extension HomeViewController : MKMapViewDelegate
         self.present(alertController, animated: true)
     }
     
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationViewDragState, fromOldState oldState: MKAnnotationViewDragState)
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationView.DragState, fromOldState oldState: MKAnnotationView.DragState)
     {
         guard let annotation = view.annotation else {
             print("Error: view dont have annotation")
@@ -269,11 +285,11 @@ extension HomeViewController: HomeViewModelDelegate
         addAnnotationsForLocations(locationsToPresent)
     }
     
-    func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
-    {
-        let span = MKCoordinateSpanMake(0.05, 0.05)
-        let region = MKCoordinateRegion(center: newUserCoordinate, span: span)
-        mapView.setRegion(region, animated: true)
-    }
+//    func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
+//    {
+//        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+//        let region = MKCoordinateRegion(center: newUserCoordinate, span: span)
+//        mapView.setRegion(region, animated: true)
+//    }
 }
 

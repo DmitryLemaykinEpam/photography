@@ -8,22 +8,14 @@
 
 import Foundation
 import CoreLocation
-
-protocol UserLocationManagerDelegate : class
-{
-    func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
-}
+import Bond
 
 class UserLocationManager: NSObject
 {
-    weak var delegate: UserLocationManagerDelegate?
+    var tracking = Observable<Bool>(false)
+    var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
     
     private lazy var clLocationManager = CLLocationManager()
-    
-    func servicesEnabled() -> Bool
-    {
-        return CLLocationManager.locationServicesEnabled()
-    }
     
     func startTarckingUserLoaction()
     {
@@ -40,15 +32,15 @@ class UserLocationManager: NSObject
     {
         clLocationManager.stopUpdatingLocation()
     }
-    
-    func userCoordinate() -> CLLocationCoordinate2D?
-    {
-        return clLocationManager.location?.coordinate
-    }
 }
 
 extension UserLocationManager : CLLocationManagerDelegate
 {
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion)
+    {
+        tracking.value = true
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
         guard locations.count > 0 else {
@@ -60,9 +52,17 @@ extension UserLocationManager : CLLocationManagerDelegate
             return
         }
         
-        let newUserCoordinate = latestLocation.coordinate
-
-        delegate?.userDidChangeCoordinate(newUserCoordinate)
+        self.userCoordinate.value = latestLocation.coordinate
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?)
+    {
+        tracking.value = false
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
+    {
+        print("Error: " + error.localizedDescription)
+        tracking.value = false
     }
 }
-

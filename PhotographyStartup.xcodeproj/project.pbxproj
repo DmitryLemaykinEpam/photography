@@ -12,9 +12,12 @@
 		3F1DFD1C2147B77C00E6695F /* MKMapView+Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD1B2147B77C00E6695F /* MKMapView+Zoom.swift */; };
 		3F1DFD1F2147C23C00E6695F /* AllLocationsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */; };
 		3F1DFD212147C25C00E6695F /* AllLocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */; };
-		3F1DFD262147E7F500E6695F /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1DFD252147E7F500E6695F /* MagicalRecord.framework */; };
-		3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */; };
+		3F1DFD292147F53200E6695F /* LocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD282147F53200E6695F /* LocationViewModel.swift */; };
 		3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */; };
+		3F267DB421552DCC005378BF /* Differ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB021552DCB005378BF /* Differ.framework */; };
+		3F267DB521552DCC005378BF /* ReactiveKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB121552DCC005378BF /* ReactiveKit.framework */; };
+		3F267DB621552DCC005378BF /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB221552DCC005378BF /* MagicalRecord.framework */; };
+		3F267DB721552DCC005378BF /* Bond.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB321552DCC005378BF /* Bond.framework */; };
 		3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */; };
 		3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03421526ACA009E0C8E /* Coordinator.swift */; };
 		3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */; };
@@ -23,6 +26,7 @@
 		3F34C04121538622009E0C8E /* LocationDetailsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */; };
 		3F34C04321539F05009E0C8E /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04221539F05009E0C8E /* HomeCoordinator.swift */; };
 		3F34C0452153B2F3009E0C8E /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */; };
+		3F34C0472154DCB3009E0C8E /* AllLocationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C0462154DCB3009E0C8E /* AllLocationsViewModel.swift */; };
 		3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9952146603D00020D5D /* AppDelegate.swift */; };
 		3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9972146603D00020D5D /* HomeViewController.swift */; };
 		3F6DB99B2146603D00020D5D /* HomeViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9992146603D00020D5D /* HomeViewController.storyboard */; };
@@ -30,7 +34,6 @@
 		3F6DB9A32146603F00020D5D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9A12146603F00020D5D /* LaunchScreen.storyboard */; };
 		3F97ED102149639700C0C85F /* VisibleLocationsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97ED0F2149639700C0C85F /* VisibleLocationsManagerTests.swift */; };
 		3F97ED12214964CB00C0C85F /* MKMapView+CoordinatesOfVisibleArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBEB402148172000F32856 /* MKMapView+CoordinatesOfVisibleArea.swift */; };
-		3F97ED13214964EB00C0C85F /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1DFD252147E7F500E6695F /* MagicalRecord.framework */; };
 		3F97ED162149761700C0C85F /* Moc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97ED152149761700C0C85F /* Moc.swift */; };
 		3FAC1BC9214936C6007D7B59 /* MKMapView+VisibleAnnotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC1BC7214935FB007D7B59 /* MKMapView+VisibleAnnotations.swift */; };
 		3FAC1BCC214942A2007D7B59 /* LocationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */; };
@@ -56,14 +59,30 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3F34C04B215507B3009E0C8E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3F10B0A02146880400D9787F /* DefaultLocations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DefaultLocations.json; sourceTree = "<group>"; };
 		3F1DFD1B2147B77C00E6695F /* MKMapView+Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKMapView+Zoom.swift"; sourceTree = "<group>"; };
 		3F1DFD1E2147C23C00E6695F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = PhotographyStartup/Base.lproj/AllLocationsViewController.storyboard; sourceTree = "<group>"; };
 		3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllLocationsViewController.swift; sourceTree = "<group>"; };
-		3F1DFD252147E7F500E6695F /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = SOURCE_ROOT; };
-		3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLocationViewModel.swift; sourceTree = "<group>"; };
+		3F1DFD282147F53200E6695F /* LocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationViewModel.swift; sourceTree = "<group>"; };
 		3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
+		3F267DB021552DCB005378BF /* Differ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Differ.framework; path = Carthage/Build/iOS/Differ.framework; sourceTree = SOURCE_ROOT; };
+		3F267DB121552DCC005378BF /* ReactiveKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveKit.framework; path = Carthage/Build/iOS/ReactiveKit.framework; sourceTree = SOURCE_ROOT; };
+		3F267DB221552DCC005378BF /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = SOURCE_ROOT; };
+		3F267DB321552DCC005378BF /* Bond.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bond.framework; path = Carthage/Build/iOS/Bond.framework; sourceTree = SOURCE_ROOT; };
 		3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+LaunchesCounter.swift"; sourceTree = "<group>"; };
 		3F34C03421526ACA009E0C8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
@@ -72,6 +91,7 @@
 		3F34C04021538622009E0C8E /* LocationDetailsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsCoordinator.swift; sourceTree = "<group>"; };
 		3F34C04221539F05009E0C8E /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
 		3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		3F34C0462154DCB3009E0C8E /* AllLocationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllLocationsViewModel.swift; sourceTree = "<group>"; };
 		3F6DB9922146603D00020D5D /* PhotographyStartup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotographyStartup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6DB9952146603D00020D5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3F6DB9972146603D00020D5D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -102,7 +122,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F1DFD262147E7F500E6695F /* MagicalRecord.framework in Frameworks */,
+				3F267DB421552DCC005378BF /* Differ.framework in Frameworks */,
+				3F267DB521552DCC005378BF /* ReactiveKit.framework in Frameworks */,
+				3F267DB621552DCC005378BF /* MagicalRecord.framework in Frameworks */,
+				3F267DB721552DCC005378BF /* Bond.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,7 +133,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F97ED13214964EB00C0C85F /* MagicalRecord.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,7 +142,10 @@
 		3F1DFD222147C26400E6695F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3F1DFD252147E7F500E6695F /* MagicalRecord.framework */,
+				3F267DB321552DCC005378BF /* Bond.framework */,
+				3F267DB021552DCB005378BF /* Differ.framework */,
+				3F267DB221552DCC005378BF /* MagicalRecord.framework */,
+				3F267DB121552DCC005378BF /* ReactiveKit.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -144,10 +169,11 @@
 			isa = PBXGroup;
 			children = (
 				3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */,
+				3F34C0462154DCB3009E0C8E /* AllLocationsViewModel.swift */,
+				3F1DFD282147F53200E6695F /* LocationViewModel.swift */,
 				3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */,
-				3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */,
-				3F1DFD282147F53200E6695F /* CustomLocationViewModel.swift */,
 				3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */,
+				3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */,
 			);
 			path = AllLocationsViewController;
 			sourceTree = "<group>";
@@ -252,6 +278,7 @@
 				3F6DB98F2146603D00020D5D /* Frameworks */,
 				3F6DB9902146603D00020D5D /* Resources */,
 				3F10B0A521468CC300D9787F /* ShellScript */,
+				3F34C04B215507B3009E0C8E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -295,6 +322,7 @@
 					};
 					3F6DB9A82146603F00020D5D = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
 						TestTargetID = 3F6DB9912146603D00020D5D;
 					};
 				};
@@ -350,13 +378,19 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/MagicalRecord.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Bond.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Differ.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ReactiveKit.framework",
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/MagicalRecord.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Bond.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Differ.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ReactiveKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -372,7 +406,7 @@
 				3FFBEB3A214807AC00F32856 /* LocationDetailsViewController.swift in Sources */,
 				3F1DFD212147C25C00E6695F /* AllLocationsViewController.swift in Sources */,
 				3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */,
-				3F1DFD292147F53200E6695F /* CustomLocationViewModel.swift in Sources */,
+				3F1DFD292147F53200E6695F /* LocationViewModel.swift in Sources */,
 				3F34C04121538622009E0C8E /* LocationDetailsCoordinator.swift in Sources */,
 				3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */,
 				3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */,
@@ -385,6 +419,7 @@
 				3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */,
 				3F34C03D2152966B009E0C8E /* UserLocationManager.swift in Sources */,
 				3F34C0452153B2F3009E0C8E /* HomeViewModel.swift in Sources */,
+				3F34C0472154DCB3009E0C8E /* AllLocationsViewModel.swift in Sources */,
 				3F34C03B21527AC7009E0C8E /* AllLocationsCoordinator.swift in Sources */,
 				3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */,
 				3FAC1BC9214936C6007D7B59 /* MKMapView+VisibleAnnotations.swift in Sources */,
@@ -573,7 +608,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = EPAM.PhotographyStartup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -596,7 +631,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = EPAM.PhotographyStartup;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -620,7 +655,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = EPAM.PhotographyStartupTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotographyStartup.app/PhotographyStartup";
 			};
@@ -645,7 +680,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = EPAM.PhotographyStartupTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotographyStartup.app/PhotographyStartup";
 			};

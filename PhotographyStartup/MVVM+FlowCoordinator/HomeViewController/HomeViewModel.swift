@@ -8,6 +8,7 @@
 
 import Foundation
 import MapKit
+import Bond
 
 protocol HomeViewModelDelegate: class
 {
@@ -15,14 +16,13 @@ protocol HomeViewModelDelegate: class
     func locationUpdated(_ location: Location, oldCoordinate: CLLocationCoordinate2D, newCoordinate: CLLocationCoordinate2D)
     func locationRemoved(_ location: Location)
     func locationsReloaded()
-    
-    func userDidChangeCoordinate(_ newUserCoordinate: CLLocationCoordinate2D)
 }
 
 class HomeViewModel
 {
     var error: Error?
     var refreshing = false
+    var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
     
     private let locationsManager: LocationsManager
     private let userLocationManager: UserLocationManager
@@ -35,25 +35,18 @@ class HomeViewModel
         self.userLocationManager = userLocationManager
         
         self.locationsManager.delegate = self
+        
+        self.userCoordinate = self.userLocationManager.userCoordinate
     }
-}
-
-// MARK - User coordinate
-extension HomeViewModel
-{
+    
     func startTarckingUserLoaction()
     {
         userLocationManager.startTarckingUserLoaction()
     }
-    
+ 
     func stopTarckingUserLoaction()
     {
         userLocationManager.stopTarckingUserLoaction()
-    }
-    
-    func userCoordinate() -> CLLocationCoordinate2D?
-    {
-        return userLocationManager.userCoordinate()
     }
 }
 
@@ -72,7 +65,7 @@ extension HomeViewModel
     
     func createNewLocation() -> Location?
     {
-        return locationsManager.createNewCustomLocation()
+        return locationsManager.createLocation()
     }
     
     func updateLocationCoordinate(_ location: Location, newCoordinate: CLLocationCoordinate2D)
