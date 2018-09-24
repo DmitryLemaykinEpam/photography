@@ -24,10 +24,10 @@ class VisibleLocationsManagerDelegate_Moc : LocationsManagerDelegate
         self.location = location
     }
     
-    func locationUpdated(_ location: Location)
+    func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
     {
         didCall_locationUpdated = true
-        self.location = location
+        self.location = updatedLocation
     }
     
     func locationRemoved(_ location: Location)

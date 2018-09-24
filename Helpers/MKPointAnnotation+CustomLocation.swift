@@ -11,11 +11,11 @@ import MapKit
 
 extension MKPointAnnotation
 {
-    static func createFor(_ customLocation: Location) -> MKPointAnnotation
+    static func createFor(_ locationViewModel: LocationViewModel) -> MKPointAnnotation
     {
         let annotation = MKPointAnnotation()
-        annotation.title = customLocation.name
-        annotation.coordinate = CLLocationCoordinate2DMake(customLocation.lat, customLocation.lon)
+        annotation.title = locationViewModel.name
+        annotation.coordinate = locationViewModel.coordinate
     
         return annotation
     }

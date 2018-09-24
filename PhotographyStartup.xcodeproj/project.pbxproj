@@ -18,6 +18,7 @@
 		3F267DB521552DCC005378BF /* ReactiveKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB121552DCC005378BF /* ReactiveKit.framework */; };
 		3F267DB621552DCC005378BF /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB221552DCC005378BF /* MagicalRecord.framework */; };
 		3F267DB721552DCC005378BF /* Bond.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F267DB321552DCC005378BF /* Bond.framework */; };
+		3F267DBB2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F267DBA2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift */; };
 		3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */; };
 		3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03421526ACA009E0C8E /* Coordinator.swift */; };
 		3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */; };
@@ -83,6 +84,7 @@
 		3F267DB121552DCC005378BF /* ReactiveKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveKit.framework; path = Carthage/Build/iOS/ReactiveKit.framework; sourceTree = SOURCE_ROOT; };
 		3F267DB221552DCC005378BF /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = SOURCE_ROOT; };
 		3F267DB321552DCC005378BF /* Bond.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bond.framework; path = Carthage/Build/iOS/Bond.framework; sourceTree = SOURCE_ROOT; };
+		3F267DBA2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Equatable.swift"; sourceTree = "<group>"; };
 		3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+LaunchesCounter.swift"; sourceTree = "<group>"; };
 		3F34C03421526ACA009E0C8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */,
 				3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */,
 				3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */,
+				3F267DBA2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -170,7 +173,6 @@
 			children = (
 				3F34C03A21527AC7009E0C8E /* AllLocationsCoordinator.swift */,
 				3F34C0462154DCB3009E0C8E /* AllLocationsViewModel.swift */,
-				3F1DFD282147F53200E6695F /* LocationViewModel.swift */,
 				3F1DFD202147C25C00E6695F /* AllLocationsViewController.swift */,
 				3F1DFD2A2147FDD100E6695F /* LocationTableViewCell.swift */,
 				3F1DFD1D2147C23C00E6695F /* AllLocationsViewController.storyboard */,
@@ -186,6 +188,7 @@
 				3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */,
 				3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */,
 				3F34C03C2152966B009E0C8E /* UserLocationManager.swift */,
+				3F1DFD282147F53200E6695F /* LocationViewModel.swift */,
 				3FAC1BCA2149424C007D7B59 /* HomeViewController */,
 				3F1DFD272147F51800E6695F /* AllLocationsViewController */,
 			);
@@ -399,6 +402,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F267DBB2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift in Sources */,
 				3F1DFD1C2147B77C00E6695F /* MKMapView+Zoom.swift in Sources */,
 				3FFBEB412148172000F32856 /* MKMapView+CoordinatesOfVisibleArea.swift in Sources */,
 				3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */,

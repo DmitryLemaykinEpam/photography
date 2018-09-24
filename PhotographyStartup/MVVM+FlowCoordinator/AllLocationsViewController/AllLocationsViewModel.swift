@@ -23,6 +23,7 @@ class AllLocationsViewModel
         self.locationsManager = locationsManager
         self.userLocationManager = userLocationManager
         
+        // Binding path through
         self.userCoordinate = self.userLocationManager.userCoordinate
     }
     
@@ -38,9 +39,8 @@ class AllLocationsViewModel
             var viewModels = [LocationViewModel]()
             for location in allLocations
             {
-                let locationViewModel = LocationViewModel()
+                let locationViewModel = LocationViewModel(lat: location.lat, lon: location.lon)
                 locationViewModel.name = location.name
-                locationViewModel.coordinate = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
                 locationViewModel.notes = location.notes
                 
                 viewModels.append(locationViewModel)
@@ -51,16 +51,11 @@ class AllLocationsViewModel
             }
             
             let distanceFormatter = MKDistanceFormatter()
-            let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.latitude)
+            let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
             for viewModel in viewModels
             {
-                guard let coordinate = viewModel.coordinate else
-                {
-                    continue
-                }
-                
-                let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-                let distance = location.distance(from: userLocation)
+                let location = CLLocation(latitude: viewModel.coordinate.latitude, longitude: viewModel.coordinate.longitude)
+                let distance = userLocation.distance(from: location)
                 
                 let distanceString = distanceFormatter.string(fromDistance: distance)
                 viewModel.distance = distanceString

@@ -9,8 +9,8 @@
 import UIKit
 import MapKit
 
-extension MKMapView {
-    
+extension MKMapView
+{    
     var MERCATOR_OFFSET : Double {
         return 268435456.0
     }

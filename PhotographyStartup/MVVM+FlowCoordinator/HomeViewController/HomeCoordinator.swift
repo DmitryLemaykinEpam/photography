@@ -58,9 +58,9 @@ class HomeCoordinator: Coordinator
         self.allLocationsCoordinator = allLocationsCoordinator
     }
     
-    func showLocationDetailesViewController(_ location: Location)
+    func showLocationDetailesViewController(_ locationViewModel: LocationViewModel)
     {
-        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter)
+        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter, locationsManager: locationsManager, selectedLocationViewModel: locationViewModel)
         locationDetailsCoordinator.delegate = self
         locationDetailsCoordinator.start()
     
@@ -71,14 +71,14 @@ class HomeCoordinator: Coordinator
 // MARK: - HomeViewControllerDelegate
 extension HomeCoordinator: HomeViewControllerDelegate
 {
-    func homeViewControllerDidSelectAllLocation(_ homeViewController: HomeViewController)
+    func homeViewControllerDidSelectShowAllLocations(_ homeViewController: HomeViewController)
     {
         showAllLocationsViewController()
     }
     
-    func homeViewControllerDidSelectEditLocation(_ location: Location)
+    func homeViewControllerDidSelectEditLocation(_ locationViewModel: LocationViewModel)
     {
-        showLocationDetailesViewController(location)
+        showLocationDetailesViewController(locationViewModel)
     }
 }
 

@@ -46,7 +46,7 @@ class AllLocationsViewController: UIViewController
         super.viewWillAppear(animated)
         
         viewModel.fetch()
-        viewModel?.startTrackingUserLoaction()
+        viewModel.startTrackingUserLoaction()
     }
     
     override func viewWillDisappear(_ animated: Bool)
@@ -54,7 +54,7 @@ class AllLocationsViewController: UIViewController
         super.viewWillDisappear(animated)
         
         viewModel.fetch()
-        viewModel?.stopTrackingUserLoaction()
+        viewModel.stopTrackingUserLoaction()
     }
 }
 

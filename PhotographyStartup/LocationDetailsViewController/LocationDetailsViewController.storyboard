@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dA5-i0-t39">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dA5-i0-t39">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -29,7 +29,7 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location Detailes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Acf-b6-GA1">
-                                        <rect key="frame" x="121.5" y="20" width="131.5" height="21"/>
+                                        <rect key="frame" x="122" y="19.5" width="131.5" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -57,19 +57,21 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="mI8-jS-jer">
                                 <rect key="frame" x="20" y="222" width="335" height="375"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V6b-yU-MFU">
-                                <rect key="frame" x="164.5" y="191" width="45.5" height="21"/>
+                                <rect key="frame" x="165" y="191" width="45.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZ9-of-8PT">
-                                <rect key="frame" x="20" y="617" width="98" height="30"/>
-                                <color key="backgroundColor" red="0.93086438493300794" green="1" blue="0.053596908213126015" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="frame" x="20" y="617" width="110" height="30"/>
+                                <color key="backgroundColor" red="0.78297774129999997" green="1" blue="0.68849548640000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="110" id="JV8-OY-jfD"/>
+                                </constraints>
                                 <state key="normal" title="Save Changes"/>
                                 <connections>
                                     <action selector="saveTap:" destination="dA5-i0-t39" eventType="touchUpInside" id="N2W-kO-Mck"/>
@@ -83,6 +85,7 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="ZDJ-YC-XPD" firstAttribute="centerX" secondItem="Mg0-uB-YDm" secondAttribute="centerX" id="8wb-h4-jkc"/>
                             <constraint firstItem="V6b-yU-MFU" firstAttribute="centerX" secondItem="Mg0-uB-YDm" secondAttribute="centerX" id="9uz-B7-mSe"/>
@@ -103,6 +106,9 @@
                             <constraint firstItem="6SD-Mu-DMT" firstAttribute="top" secondItem="tnf-ro-p14" secondAttribute="bottom" constant="20" id="nNk-HA-6no"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="saW-we-vLE"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="GV4-JI-OdA" appends="YES" id="PdI-dA-DzE"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="descriptionTextView" destination="mI8-jS-jer" id="hei-U7-dWE"/>
@@ -110,6 +116,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wMH-ml-GWi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="GV4-JI-OdA" userLabel="All View Tap Gesture Recognizer">
+                    <connections>
+                        <action selector="allViewTap:" destination="dA5-i0-t39" id="HlX-5T-vkr"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4" y="-89"/>
         </scene>

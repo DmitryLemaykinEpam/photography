@@ -12,9 +12,9 @@ import Bond
 
 protocol HomeViewModelDelegate: class
 {
-    func locationAdded(_ location: Location)
-    func locationUpdated(_ location: Location, oldCoordinate: CLLocationCoordinate2D, newCoordinate: CLLocationCoordinate2D)
-    func locationRemoved(_ location: Location)
+    func locationAdded(_ locationViewModel: LocationViewModel)
+    func locationUpdated(_ locationViewModel: LocationViewModel)
+    func locationRemoved(_ locationViewModel: LocationViewModel)
     func locationsReloaded()
 }
 
@@ -23,6 +23,8 @@ class HomeViewModel
     var error: Error?
     var refreshing = false
     var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
+    
+    var visibleLocationViewModels = [LocationViewModel]()
     
     private let locationsManager: LocationsManager
     private let userLocationManager: UserLocationManager
@@ -36,6 +38,7 @@ class HomeViewModel
         
         self.locationsManager.delegate = self
         
+        // Path trough of bindings
         self.userCoordinate = self.userLocationManager.userCoordinate
     }
     
@@ -53,9 +56,17 @@ class HomeViewModel
 // MARK - Visible locations
 extension HomeViewModel
 {
-    func locationFor(_ coordinate: CLLocationCoordinate2D) -> Location?
+    func locationViewModelFor(name: String, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
     {
-        return locationsManager.locationFor(coordinate)
+        for locationViewModel in visibleLocationViewModels
+        {
+            if locationViewModel.name == name && locationViewModel.coordinate == coordinate
+            {
+                return locationViewModel
+            }
+        }
+
+        return nil
     }
     
     func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
@@ -63,20 +74,42 @@ extension HomeViewModel
         locationsManager.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
-    func createNewLocation() -> Location?
+    func createNewLocation(_ locationViewModel: LocationViewModel)
     {
-        return locationsManager.createLocation()
-    }
-    
-    func updateLocationCoordinate(_ location: Location, newCoordinate: CLLocationCoordinate2D)
-    {
-        let oldCoordinate = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
+        guard let newLocation = locationsManager.createLocation() else {
+            print("Error: Could not create new location")
+            return
+        }
         
-        location.lat = newCoordinate.latitude
-        location.lon = newCoordinate.longitude
+        newLocation.name = locationViewModel.name
+        newLocation.notes = locationViewModel.notes
+        newLocation.lat = locationViewModel.coordinate.latitude
+        newLocation.lon = locationViewModel.coordinate.longitude
         
         locationsManager.saveToPersistentStore()
-        delegate?.locationUpdated(location, oldCoordinate: oldCoordinate, newCoordinate: newCoordinate)
+    }
+    
+    func updateLocationViewModel(_ locationViewModel: LocationViewModel)
+    {
+        guard let location = locationsManager.locationFor(name: locationViewModel.name, coordinate: locationViewModel.coordinate) else {
+            print("Error: coudl not find Location for locationViewModel")
+            return
+        }
+        
+        if let updatedName = locationViewModel.updatedName {
+            location.name = updatedName
+        }
+        
+        if let updatedNotes = locationViewModel.updatedNotes {
+            location.notes = updatedNotes
+        }
+        
+        if let updatedCoordinate = locationViewModel.updatedCoordinate {
+            location.lat = updatedCoordinate.latitude
+            location.lon = updatedCoordinate.longitude
+        }
+        
+        locationsManager.saveToPersistentStore()
     }
     
     func updateVisibleLocations()
@@ -84,13 +117,13 @@ extension HomeViewModel
         locationsManager.fetch()
     }
     
-    func visibleLocations() -> [Location]?
+    func removeLocation(_ locationViewModel: LocationViewModel)
     {
-        return locationsManager.visibleLocations()
-    }
-    
-    func removeLocation(_ location: Location)
-    {
+        guard let location = locationsManager.locationFor(name: locationViewModel.name, coordinate: locationViewModel.coordinate) else {
+            print("Error: could not get Locations for LocationsViewModel")
+            return
+        }
+        
         locationsManager.removeLocation(location)
         locationsManager.saveToPersistentStore()
     }
@@ -101,21 +134,50 @@ extension HomeViewModel: LocationsManagerDelegate
 {
     func locationAdded(_ location: Location)
     {
-        self.delegate?.locationAdded(location)
+        let locationViewModel = LocationViewModel(location)
+        visibleLocationViewModels.append(locationViewModel)
+        self.delegate?.locationAdded(locationViewModel)
     }
     
     func locationRemoved(_ location: Location)
     {
-        self.delegate?.locationRemoved(location)
+        let locationViewModel = LocationViewModel(location)
+        visibleLocationViewModels.remove(locationViewModel)
+        
+        self.delegate?.locationRemoved(locationViewModel)
     }
     
-    func locationUpdated(_ location: Location)
+    func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
     {
-        // Does nothing, need to get old and new coordinate
+        guard let indexPath = indexPath else {
+            print("Error: no index psth for update")
+            return
+        }
+        
+        let updatedLocationViewModel = visibleLocationViewModels[indexPath.row]
+        
+        updatedLocationViewModel.updatedName = updatedLocation.name
+        updatedLocationViewModel.updatedNotes = updatedLocation.notes
+        updatedLocationViewModel.updatedCoordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
+            , longitude: updatedLocation.lon)
+        
+        self.delegate?.locationUpdated(updatedLocationViewModel)
     }
     
     func locationsReloaded()
     {
+        visibleLocationViewModels.removeAll()
+        
+        guard let visibleLocations = locationsManager.visibleLocations() else {
+            return
+        }
+        
+        for location in visibleLocations
+        {
+            let locationViewModel = LocationViewModel(location)
+            visibleLocationViewModels.append(locationViewModel)
+        }
+        
         self.delegate?.locationsReloaded()
     }
 }

@@ -11,11 +11,10 @@ import MapKit
 
 extension MKAnnotation
 {
-    func forLocation(_ location: Location) -> Bool
+    func isForLocationViewModel(_ locationViewModel: LocationViewModel) -> Bool
     {
-        if self.title == location.name &&
-            self.coordinate.latitude == location.lat &&
-            self.coordinate.longitude == location.lon
+        if self.title == locationViewModel.name &&
+           self.coordinate == locationViewModel.coordinate
         {
             return true
         }

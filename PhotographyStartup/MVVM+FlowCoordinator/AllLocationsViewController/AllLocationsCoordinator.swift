@@ -45,9 +45,9 @@ class AllLocationsCoordinator: Coordinator
         presenter.pushViewController(allLocationsViewController, animated: true)
     }
     
-    func showLocationDetailesViewController(_ location: Location)
+    func showLocationDetailesViewController(_ locationViewModel: LocationViewModel)
     {
-        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter)
+        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter, locationsManager: locationsManager, selectedLocationViewModel: locationViewModel)
         locationDetailsCoordinator.delegate = self
         locationDetailsCoordinator.start()
         
@@ -57,26 +57,25 @@ class AllLocationsCoordinator: Coordinator
 
 extension AllLocationsCoordinator: AllLocationsViewControllerDelegate
 {
-    func allLocationsViewControllerDelegateDidSelectLocation(_ viewModel: LocationViewModel)
+    func allLocationsViewControllerDelegateDidSelectLocation(_ locationViewModel: LocationViewModel)
     {
-        guard let coordinate = viewModel.coordinate,
-              let name = viewModel.name else
-        {
-            print("Error: LocationViewModel does not have coordinate or name")
-            return
-        }
+//        guard let name = viewModel.name else
+//        {
+//            print("Error: LocationViewModel does not have coordinate or name")
+//            return
+//        }
+//        
+//        let formattedLatitude = String(format: "%.16f", viewModel.coordinate.latitude)
+//        let formattedLongitude = String(format: "%.16f", viewModel.coordinate.longitude)
+//        
+//        let predicate = NSPredicate(format: "name = \"\(name)\" AND lat = \(formattedLatitude) AND lon = \(formattedLongitude)")
+//        
+//        guard let location = Location.mr_findFirst(with: predicate) else {
+//            print("Error: could not find CustomLocation for ViewModel")
+//            return
+//        }
         
-        let formattedLatitude = String(format: "%.16f", coordinate.latitude)
-        let formattedLongitude = String(format: "%.16f", coordinate.longitude)
-        
-        let predicate = NSPredicate(format: "name = \"\(name)\" AND lat = \(formattedLatitude) AND lon = \(formattedLongitude)")
-        
-        guard let location = Location.mr_findFirst(with: predicate) else {
-            print("Error: could not find CustomLocation for ViewModel")
-            return
-        }
-        
-        showLocationDetailesViewController(location)
+        showLocationDetailesViewController(locationViewModel)
     }
     
     func allLocationsViewControllerDelegateDidBackAction()

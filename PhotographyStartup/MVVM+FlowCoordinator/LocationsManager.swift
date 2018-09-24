@@ -9,11 +9,14 @@
 import UIKit
 import MapKit
 import MagicalRecord
+import Bond
 
+// Bond approach with MutableObservableArray is not suitable for this dalaguete in this case,
+// because array going to be replaced
 protocol LocationsManagerDelegate
 {
     func locationAdded(_ location: Location)
-    func locationUpdated(_ location: Location)
+    func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
     func locationRemoved(_ location: Location)
     func locationsReloaded()
 }
@@ -79,7 +82,8 @@ class LocationsManager : NSObject
         }
     }
     
-    private lazy var fetchedResultsController : NSFetchedResultsController<NSFetchRequestResult> = {
+    private lazy var visibleLocationsFetchedResultsController : NSFetchedResultsController<NSFetchRequestResult> =
+    {
         let context = NSManagedObjectContext.mr_default()
         
         let fetchRequest = Location.mr_requestAllSorted(by: "name", ascending: false, in: context)
@@ -117,14 +121,14 @@ class LocationsManager : NSObject
     {
         do
         {
-            try fetchedResultsController.performFetch()
+            try visibleLocationsFetchedResultsController.performFetch()
         }
         catch
         {
             print("Error: \(error)")
         }
         
-        print("Fetched count:\(String(describing: self.fetchedResultsController.fetchedObjects?.count))")
+        print("Fetched count:\(String(describing: self.visibleLocationsFetchedResultsController.fetchedObjects?.count))")
         
         self.delegate?.locationsReloaded()
     }
@@ -139,9 +143,9 @@ class LocationsManager : NSObject
         }
     }
     
-    func locationFor(_ coordinate: CLLocationCoordinate2D) -> Location?
+    func locationFor(name: String?, coordinate: CLLocationCoordinate2D) -> Location?
     {
-        guard let fetchRequestResults = fetchedResultsController.fetchedObjects else {
+        guard let fetchRequestResults = visibleLocationsFetchedResultsController.fetchedObjects, fetchRequestResults.count > 0 else {
             return nil
         }
         
@@ -152,8 +156,9 @@ class LocationsManager : NSObject
                 return nil
             }
             
-            if location.lat == coordinate.latitude &&
-               location.lon == coordinate.longitude
+            if  location.name == name &&
+                location.lat == coordinate.latitude &&
+                location.lon == coordinate.longitude
             {
                 return location
             }
@@ -182,13 +187,12 @@ extension LocationsManager : NSFetchedResultsControllerDelegate
         {
         case .insert:
             self.delegate?.locationAdded(location)
-            break
+            
         case .delete:
             self.delegate?.locationRemoved(location)
-            break
+            
         case .update:
-            self.delegate?.locationUpdated(location)
-            break
+            self.delegate?.locationUpdated(location, indexPath: indexPath)
             
         default:
             // Do nothing
@@ -202,7 +206,7 @@ extension LocationsManager
 {
     func visibleLocations() -> [Location]?
     {
-        guard let fetchedLocations = fetchedResultsController.fetchedObjects as? [Location] else {
+        guard let fetchedLocations = visibleLocationsFetchedResultsController.fetchedObjects as? [Location] else {
             return nil
         }
         
@@ -219,7 +223,7 @@ extension LocationsManager
         
         let predicate = NSPredicate(format: "\(minLat) <= lat AND lat <= \(maxLat) AND \(minLon) <= lon AND lon <= \(maxLon)")
         
-        fetchedResultsController.fetchRequest.predicate = predicate
+        visibleLocationsFetchedResultsController.fetchRequest.predicate = predicate
         fetch()
     }
 }
