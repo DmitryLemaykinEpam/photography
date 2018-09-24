@@ -1,5 +1,5 @@
 //
-//  wwr.swift
+//  MKMapView+VisibleAnnotations.swift
 //  PhotographyStartupTests
 //
 //  Created by Dmitry Lemaykin on 9/12/18.

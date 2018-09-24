@@ -11,13 +11,13 @@
 
 import UIKit
 
-struct DefaultLocations : Codable
+struct DefaultLocations: Codable
 {
-    struct DefaultLocation : Codable {
-        let name : String
-        let lat : Double
-        let lng : Double
+    struct DefaultLocation: Codable {
+        let name: String
+        let lat: Double
+        let lng: Double
     }
     
-    let locations : [DefaultLocation]
+    let locations: [DefaultLocation]
 }

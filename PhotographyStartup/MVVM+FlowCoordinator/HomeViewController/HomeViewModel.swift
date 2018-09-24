@@ -31,7 +31,7 @@ class HomeViewModel
     
     weak var delegate: HomeViewModelDelegate?
     
-    init(locationsManager : LocationsManager, userLocationManager: UserLocationManager)
+    init(locationsManager: LocationsManager, userLocationManager: UserLocationManager)
     {
         self.locationsManager = locationsManager
         self.userLocationManager = userLocationManager
@@ -112,11 +112,6 @@ extension HomeViewModel
         locationsManager.saveToPersistentStore()
     }
     
-    func updateVisibleLocations()
-    {
-        locationsManager.fetch()
-    }
-    
     func removeLocation(_ locationViewModel: LocationViewModel)
     {
         guard let location = locationsManager.locationFor(name: locationViewModel.name, coordinate: locationViewModel.coordinate) else {
@@ -155,7 +150,6 @@ extension HomeViewModel: LocationsManagerDelegate
         }
         
         let updatedLocationViewModel = visibleLocationViewModels[indexPath.row]
-        
         updatedLocationViewModel.updatedName = updatedLocation.name
         updatedLocationViewModel.updatedNotes = updatedLocation.notes
         updatedLocationViewModel.updatedCoordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
