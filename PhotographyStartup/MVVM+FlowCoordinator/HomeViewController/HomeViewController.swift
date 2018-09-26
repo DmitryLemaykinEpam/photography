@@ -55,6 +55,13 @@ class HomeViewController: UIViewController
         }
     }
     
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
@@ -102,11 +109,11 @@ extension HomeViewController
         
         print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
         
-        let newLocationViewModel = LocationViewModel(lat: locationCoordinate.latitude, lon: locationCoordinate.longitude)
-        newLocationViewModel.name = "Name is Not yet set"
-        newLocationViewModel.coordinate = locationCoordinate
+        let newLocationViewModel = viewModel.createNewLocationViewModel()
+        newLocationViewModel.updatedName = ""
+        newLocationViewModel.updatedCoordinate = locationCoordinate
         
-        viewModel.createNewLocation(newLocationViewModel)
+        let _ = newLocationViewModel.saveUpdates()
     }
     
     @IBAction func allLocationsTap(_ sender: Any)
@@ -123,7 +130,7 @@ extension HomeViewController : MKMapViewDelegate
         let neCoordinate = mapView.getNECoordinate()
         let swCoordinate = mapView.getSWCoordinate()
         
-        viewModel?.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
+        viewModel.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
@@ -217,8 +224,7 @@ extension HomeViewController : MKMapViewDelegate
             }
             
             selectedLocationViewModel.updatedCoordinate = annotation.coordinate
-            
-            viewModel.updateLocationViewModel(selectedLocationViewModel)
+            let _ = selectedLocationViewModel.saveUpdates()
             break
         default:
             // Do nothing

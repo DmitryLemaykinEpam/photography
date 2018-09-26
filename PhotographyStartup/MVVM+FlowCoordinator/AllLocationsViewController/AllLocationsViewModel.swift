@@ -39,10 +39,7 @@ class AllLocationsViewModel
             var viewModels = [LocationViewModel]()
             for location in allLocations
             {
-                let locationViewModel = LocationViewModel(lat: location.lat, lon: location.lon)
-                locationViewModel.name = location.name
-                locationViewModel.notes = location.notes
-                
+                let locationViewModel = LocationViewModel(locationsManager: self.locationsManager, location: location)
                 viewModels.append(locationViewModel)
             }
             
@@ -50,15 +47,11 @@ class AllLocationsViewModel
                 return
             }
             
-            let distanceFormatter = MKDistanceFormatter()
             let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
             for viewModel in viewModels
             {
                 let location = CLLocation(latitude: viewModel.coordinate.latitude, longitude: viewModel.coordinate.longitude)
-                let distance = userLocation.distance(from: location)
-                
-                let distanceString = distanceFormatter.string(fromDistance: distance)
-                viewModel.distance = distanceString
+                viewModel.distance = userLocation.distance(from: location)
             }
             
             viewModels.sort(by: { (viewModel1, viewModel2) -> Bool in

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ApplicationCoordinator: Coordinator
+class ApplicationCoordinator: NSObject, Coordinator
 {
     let window: UIWindow
     fileprivate let rootViewController: UINavigationController
@@ -21,9 +21,12 @@ class ApplicationCoordinator: Coordinator
     init(window: UIWindow)
     {
         self.window = window
+        self.rootViewController = UINavigationController()
         
-        rootViewController = UINavigationController()
-        rootViewController.navigationBar.isHidden = true
+        super.init()
+        
+        rootViewController.delegate = self
+        //rootViewController.navigationBar.isHidden = true
         
         window.rootViewController = rootViewController
         window.makeKeyAndVisible()
@@ -43,6 +46,9 @@ class ApplicationCoordinator: Coordinator
         self.homeCoordinator = homeCoordinator
     }
 }
+
+//MARK: - UINavigationControllerDelegate
+extension ApplicationCoordinator: UINavigationControllerDelegate {}
 
 // MARK: - HomeCoordinatorDelegate
 extension ApplicationCoordinator: HomeCoordinatorDelegate

@@ -184,8 +184,8 @@
 			isa = PBXGroup;
 			children = (
 				3F267DBD21593630005378BF /* LocationDetailsCoordinator.swift */,
-				3F267DBE21593630005378BF /* LocationDetailsViewController.storyboard */,
 				3F267DBF21593630005378BF /* LocationDetailsViewController.swift */,
+				3F267DBE21593630005378BF /* LocationDetailsViewController.storyboard */,
 			);
 			path = LocationDetailsViewController;
 			sourceTree = "<group>";

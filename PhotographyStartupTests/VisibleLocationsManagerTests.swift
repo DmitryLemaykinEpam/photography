@@ -13,12 +13,12 @@ import MagicalRecord
 class VisibleLocationsManagerTests: CoreDataTestCase
 {
     var locationsManager : LocationsManager!
-    var mocDelegate : VisibleLocationsManagerDelegate_Moc!
+    var mocDelegate : LocationsManagerDelegate_Moc!
     
     override func setUp() {
         super.setUp()
 
-        mocDelegate = VisibleLocationsManagerDelegate_Moc()
+        mocDelegate = LocationsManagerDelegate_Moc()
         XCTAssertNotNil(mocDelegate)
 
         locationsManager = LocationsManager()
@@ -36,21 +36,40 @@ class VisibleLocationsManagerTests: CoreDataTestCase
         super.tearDown()
     }
     
-    func testVisibleLocationsManager_CreateNewCustomLocation_Success()
+    func testLocationsManager_CreateNewLocation_Success()
     {
+        let name = "Name"
+        let notes = "notes"
+        let lat: Double = 101.0
+        let lon: Double = 102.0
+        
         locationsManager.delegate = mocDelegate
         let location = locationsManager.createLocation()
+        location?.name = name
+        location?.notes = notes
+        location?.lat = lat
+        location?.lon = lon
         locationsManager.saveToPersistentStore()
 
         XCTAssertNotNil(location)
-        XCTAssertTrue(Location.mr_findAll()?.count == 1)
+        let resultLocations = Location.mr_findAll()
+        XCTAssertTrue(resultLocations?.count == 1)
+        guard let resultLocation = resultLocations?.first as? Location else {
+            XCTFail()
+            return
+        }
+        XCTAssertTrue(resultLocation.name == name)
+        XCTAssertTrue(resultLocation.notes == notes)
+        XCTAssertTrue(resultLocation.lat == lat)
+        XCTAssertTrue(resultLocation.lon == lon)
+        
         XCTAssertTrue(locationsManager.visibleLocations()?.count == 1)
         XCTAssertFalse(mocDelegate.didCall_locationRemoved)
         XCTAssertTrue(mocDelegate.didCall_locationAdded)
         XCTAssertFalse(mocDelegate.didCall_locationsReloaded)
     }
     
-    func testVisibleLocationsManager_RemoveCustomeLocation_Success()
+    func testLocationsManager_RemoveLocation_Success()
     {
         guard let location = locationsManager.createLocation() else {
             XCTFail()
@@ -72,7 +91,7 @@ class VisibleLocationsManagerTests: CoreDataTestCase
         XCTAssertFalse(mocDelegate.didCall_locationsReloaded)
     }
     
-    func testVisibleLocationsManager_CreateNewCustomLocation_Fast()
+    func testLocationsManager_CreateNewLocation_Fast()
     {
         self.measure {
             for _ in 0..<1000

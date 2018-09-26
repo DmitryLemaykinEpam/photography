@@ -95,8 +95,8 @@ class LocationsManager : NSObject
     
     func createLocation() -> Location?
     {
-        let context = NSManagedObjectContext.mr_default()
-
+        let context = visibleLocationsFetchedResultsController.managedObjectContext
+        
         guard let newLocation = Location.mr_createEntity(in: context) else {
             print("Error: New CustomLocation could not be created")
             return nil
@@ -174,7 +174,7 @@ class LocationsManager : NSObject
     }
  }
 
-extension LocationsManager : NSFetchedResultsControllerDelegate
+extension LocationsManager: NSFetchedResultsControllerDelegate
 {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
     {
@@ -194,7 +194,7 @@ extension LocationsManager : NSFetchedResultsControllerDelegate
         case .update:
             self.delegate?.locationUpdated(location, indexPath: indexPath)
             
-        default:
+        case .move:
             // Do nothing
             break
         }
@@ -221,7 +221,13 @@ extension LocationsManager
         let minLon = min(neCoordinate.longitude, swCoordinate.longitude)
         let maxLon = max(swCoordinate.longitude, neCoordinate.longitude)
         
-        let predicate = NSPredicate(format: "\(minLat) <= lat AND lat <= \(maxLat) AND \(minLon) <= lon AND lon <= \(maxLon)")
+        let minLatFormatted = String(format: "%.16f", minLat)
+        let maxLatFormatted = String(format: "%.16f", maxLat)
+        
+        let minLonFormatted = String(format: "%.16f", minLon)
+        let maxLonFormatted = String(format: "%.16f", maxLon)
+        
+        let predicate = NSPredicate(format: "\(minLatFormatted) <= lat AND lat <= \(maxLatFormatted) AND \(minLonFormatted) <= lon AND lon <= \(maxLonFormatted)")
         
         visibleLocationsFetchedResultsController.fetchRequest.predicate = predicate
         fetch()

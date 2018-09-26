@@ -59,22 +59,6 @@ extension AllLocationsCoordinator: AllLocationsViewControllerDelegate
 {
     func allLocationsViewControllerDelegateDidSelectLocation(_ locationViewModel: LocationViewModel)
     {
-//        guard let name = viewModel.name else
-//        {
-//            print("Error: LocationViewModel does not have coordinate or name")
-//            return
-//        }
-//        
-//        let formattedLatitude = String(format: "%.16f", viewModel.coordinate.latitude)
-//        let formattedLongitude = String(format: "%.16f", viewModel.coordinate.longitude)
-//        
-//        let predicate = NSPredicate(format: "name = \"\(name)\" AND lat = \(formattedLatitude) AND lon = \(formattedLongitude)")
-//        
-//        guard let location = Location.mr_findFirst(with: predicate) else {
-//            print("Error: could not find CustomLocation for ViewModel")
-//            return
-//        }
-        
         showLocationDetailesViewController(locationViewModel)
     }
     

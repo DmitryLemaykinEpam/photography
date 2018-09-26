@@ -12,10 +12,9 @@ import MagicalRecord
 protocol LocationDetailsViewControllerDelegate: class
 {
     func locationDetailsViewControllerDidBackAction()
-    func locationDetailsViewControllerDidSaveViewModel(_ viewModel: LocationViewModel)
 }
 
-class LocationDetailsViewController: UIViewController
+class LocationDetailsViewController: UITableViewController
 {
     weak var delegate: LocationDetailsViewControllerDelegate?
     
@@ -24,29 +23,51 @@ class LocationDetailsViewController: UIViewController
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
+        
+        let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: .save)
+        self.navigationItem.rightBarButtonItem = saveBarButtonItem
         
         self.nameTextField.text = viewModel.name
         self.descriptionTextView.text = viewModel.notes
     }
-
-    @IBAction func saveTap(_ sender: Any)
+    
+    override func viewWillAppear(_ animated: Bool)
     {
-        viewModel.updatedName = self.nameTextField.text
-        viewModel.updatedNotes = self.descriptionTextView.text
+        super.viewWillAppear(animated)
         
-        self.delegate?.locationDetailsViewControllerDidSaveViewModel(viewModel)
+        navigationController?.navigationBar.isHidden = false
     }
     
-    func showSaveResultAlert(success: Bool, error: Error?)
+    override func viewDidDisappear(_ animated: Bool)
     {
-        let message = success ? "Success" : "Could not save"
+        super.viewDidDisappear(animated)
         
-        let alertController = UIAlertController(title: "Save compleat", message: message, preferredStyle: .actionSheet)
-        let confirmAction = UIAlertAction(title: "Ok", style: .default, handler: { action in
+        if isMovingFromParent
+        {
+            delegate?.locationDetailsViewControllerDidBackAction()
+        }
+    }
+
+    @objc func save()
+    {
+        viewModel.updatedName = nameTextField.text
+        viewModel.updatedNotes = descriptionTextView.text
+        
+        guard let errorMessage = viewModel.saveUpdates() else {
             self.navigateBack()
-        })
+            return
+        }
+        
+        showSaveResultErrorAlert(errorMessage)
+    }
+    
+    func showSaveResultErrorAlert(_ errorMessage: String)
+    {
+        let alertController = UIAlertController(title: "Could not save", message: errorMessage, preferredStyle: .actionSheet)
+        let confirmAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
         alertController.addAction(confirmAction)
         
         if let popoverController = alertController.popoverPresentationController
@@ -58,18 +79,15 @@ class LocationDetailsViewController: UIViewController
         self.present(alertController, animated: true)
     }
     
-    @IBAction func backTap(_ sender: Any)
-    {
-        navigateBack()
-    }
-    
     func navigateBack()
     {
         self.delegate?.locationDetailsViewControllerDidBackAction()
+        
+        _ = self.navigationController?.popViewController(animated: true)
     }
-    
-    @IBAction func allViewTap(_ sender: Any)
-    {
-        self.view.endEditing(true)
-    }
+}
+
+fileprivate extension Selector
+{
+    static let save = #selector(LocationDetailsViewController.save)
 }

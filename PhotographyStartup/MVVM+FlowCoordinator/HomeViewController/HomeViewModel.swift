@@ -74,42 +74,10 @@ extension HomeViewModel
         locationsManager.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
-    func createNewLocation(_ locationViewModel: LocationViewModel)
+    func createNewLocationViewModel() -> LocationViewModel
     {
-        guard let newLocation = locationsManager.createLocation() else {
-            print("Error: Could not create new location")
-            return
-        }
-        
-        newLocation.name = locationViewModel.name
-        newLocation.notes = locationViewModel.notes
-        newLocation.lat = locationViewModel.coordinate.latitude
-        newLocation.lon = locationViewModel.coordinate.longitude
-        
-        locationsManager.saveToPersistentStore()
-    }
-    
-    func updateLocationViewModel(_ locationViewModel: LocationViewModel)
-    {
-        guard let location = locationsManager.locationFor(name: locationViewModel.name, coordinate: locationViewModel.coordinate) else {
-            print("Error: coudl not find Location for locationViewModel")
-            return
-        }
-        
-        if let updatedName = locationViewModel.updatedName {
-            location.name = updatedName
-        }
-        
-        if let updatedNotes = locationViewModel.updatedNotes {
-            location.notes = updatedNotes
-        }
-        
-        if let updatedCoordinate = locationViewModel.updatedCoordinate {
-            location.lat = updatedCoordinate.latitude
-            location.lon = updatedCoordinate.longitude
-        }
-        
-        locationsManager.saveToPersistentStore()
+        let locationViewModel = LocationViewModel(locationsManager: locationsManager, lat: 0, lon: 0)
+        return locationViewModel
     }
     
     func removeLocation(_ locationViewModel: LocationViewModel)
@@ -129,14 +97,14 @@ extension HomeViewModel: LocationsManagerDelegate
 {
     func locationAdded(_ location: Location)
     {
-        let locationViewModel = LocationViewModel(location)
+        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
         visibleLocationViewModels.append(locationViewModel)
         self.delegate?.locationAdded(locationViewModel)
     }
     
     func locationRemoved(_ location: Location)
     {
-        let locationViewModel = LocationViewModel(location)
+        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
         visibleLocationViewModels.remove(locationViewModel)
         
         self.delegate?.locationRemoved(locationViewModel)
@@ -168,7 +136,7 @@ extension HomeViewModel: LocationsManagerDelegate
         
         for location in visibleLocations
         {
-            let locationViewModel = LocationViewModel(location)
+            let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
             visibleLocationViewModels.append(locationViewModel)
         }
         

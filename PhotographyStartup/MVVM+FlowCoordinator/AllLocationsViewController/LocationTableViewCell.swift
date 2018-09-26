@@ -23,11 +23,3 @@ class LocationTableViewCell: UITableViewCell
         // Configure the view for the selected state
     }
 }
-
-extension LocationTableViewCell: LocationViewModelDelegate
-{
-    func locationViewModelDidChange(_ locationViewModel: LocationViewModel)
-    {
-        self.distanceLabel.text = locationViewModel.distance
-    }
-}

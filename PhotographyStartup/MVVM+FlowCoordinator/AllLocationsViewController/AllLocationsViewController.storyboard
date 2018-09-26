@@ -10,49 +10,16 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--All Locations View Controller-->
+        <!--All Locations-->
         <scene sceneID="0nm-pG-SWf">
             <objects>
-                <viewController id="rra-fb-pgA" customClass="AllLocationsViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="All Locations" id="rra-fb-pgA" customClass="AllLocationsViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rai-kQ-L0U">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HMS-dC-QlD" userLabel="Navigation Bar Background View">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
-                                <color key="backgroundColor" red="0.78297774129999997" green="1" blue="0.68849548640000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="kFY-Xy-bUx"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qxC-Fq-nQG" userLabel="Navigation Bar Buttons Container View">
-                                <rect key="frame" x="0.0" y="20" width="375" height="60"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2U-Rt-eBy">
-                                        <rect key="frame" x="10" y="15" width="34" height="30"/>
-                                        <state key="normal" title="Back"/>
-                                        <connections>
-                                            <action selector="backTap:" destination="rra-fb-pgA" eventType="touchUpInside" id="0vJ-oQ-zrl"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All Locations" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQD-V8-Ymt">
-                                        <rect key="frame" x="139" y="19.5" width="97.5" height="21"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstItem="kQD-V8-Ymt" firstAttribute="centerX" secondItem="qxC-Fq-nQG" secondAttribute="centerX" id="T2Y-tl-oOH"/>
-                                    <constraint firstItem="kQD-V8-Ymt" firstAttribute="centerY" secondItem="qxC-Fq-nQG" secondAttribute="centerY" id="Te9-na-dvd"/>
-                                    <constraint firstItem="B2U-Rt-eBy" firstAttribute="leading" secondItem="qxC-Fq-nQG" secondAttribute="leading" constant="10" id="Xa1-kl-CUq"/>
-                                    <constraint firstItem="B2U-Rt-eBy" firstAttribute="centerY" secondItem="qxC-Fq-nQG" secondAttribute="centerY" id="bFp-R3-6uI"/>
-                                    <constraint firstAttribute="height" constant="60" id="zcb-ix-N9r"/>
-                                </constraints>
-                            </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="lZW-Q9-hlc">
-                                <rect key="frame" x="0.0" y="80" width="375" height="587"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LocationCellReuseId" rowHeight="68" id="R26-5o-VRO" customClass="LocationTableViewCell" customModule="PhotographyStartup" customModuleProvider="target">
@@ -89,17 +56,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="HMS-dC-QlD" firstAttribute="top" secondItem="Rai-kQ-L0U" secondAttribute="top" id="3ie-Qk-SNV"/>
-                            <constraint firstItem="HMS-dC-QlD" firstAttribute="leading" secondItem="Rai-kQ-L0U" secondAttribute="leading" id="GHz-6O-auk"/>
-                            <constraint firstItem="qxC-Fq-nQG" firstAttribute="top" secondItem="DGj-jB-0q7" secondAttribute="top" id="MPT-ap-FVT"/>
-                            <constraint firstAttribute="trailing" secondItem="HMS-dC-QlD" secondAttribute="trailing" id="TLi-ct-2rS"/>
+                            <constraint firstItem="lZW-Q9-hlc" firstAttribute="top" secondItem="DGj-jB-0q7" secondAttribute="top" id="Jxc-rm-HQl"/>
                             <constraint firstItem="lZW-Q9-hlc" firstAttribute="leading" secondItem="DGj-jB-0q7" secondAttribute="leading" id="dwx-S7-ndS"/>
-                            <constraint firstItem="qxC-Fq-nQG" firstAttribute="trailing" secondItem="DGj-jB-0q7" secondAttribute="trailing" id="ndS-Cv-UvN"/>
-                            <constraint firstItem="HMS-dC-QlD" firstAttribute="bottom" secondItem="qxC-Fq-nQG" secondAttribute="bottom" id="r2U-ia-Vtu"/>
                             <constraint firstAttribute="bottom" secondItem="lZW-Q9-hlc" secondAttribute="bottom" id="rdq-ct-ik2"/>
-                            <constraint firstItem="qxC-Fq-nQG" firstAttribute="leading" secondItem="DGj-jB-0q7" secondAttribute="leading" id="tbu-08-q4u"/>
                             <constraint firstItem="DGj-jB-0q7" firstAttribute="trailing" secondItem="lZW-Q9-hlc" secondAttribute="trailing" id="vgH-mh-e3N"/>
-                            <constraint firstItem="lZW-Q9-hlc" firstAttribute="top" secondItem="HMS-dC-QlD" secondAttribute="bottom" id="vr1-RN-9R2"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="DGj-jB-0q7"/>
                     </view>

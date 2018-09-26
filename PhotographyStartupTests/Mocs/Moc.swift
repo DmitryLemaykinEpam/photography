@@ -9,7 +9,7 @@
 import XCTest
 @testable import PhotographyStartup
 
-class VisibleLocationsManagerDelegate_Moc : LocationsManagerDelegate
+class LocationsManagerDelegate_Moc : LocationsManagerDelegate
 {
     var location : Location?
     

@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import Bond
 
-protocol AllLocationsViewControllerDelegate : class
+protocol AllLocationsViewControllerDelegate: class
 {
     func allLocationsViewControllerDelegateDidSelectLocation(_ location: LocationViewModel)
     func allLocationsViewControllerDelegateDidBackAction()
@@ -22,6 +22,8 @@ class AllLocationsViewController: UIViewController
     weak var delegate: AllLocationsViewControllerDelegate?
     
     @IBOutlet weak var tableView: UITableView!
+    
+    let distanceFormatter = MKDistanceFormatter()
     
     override func viewDidLoad()
     {
@@ -47,26 +49,24 @@ class AllLocationsViewController: UIViewController
         
         viewModel.fetch()
         viewModel.startTrackingUserLoaction()
+        
+        navigationController?.navigationBar.isHidden = false
     }
     
-    override func viewWillDisappear(_ animated: Bool)
+    override func viewDidDisappear(_ animated: Bool)
     {
-        super.viewWillDisappear(animated)
+        super.viewDidDisappear(animated)
         
-        viewModel.fetch()
         viewModel.stopTrackingUserLoaction()
+        
+        if isMovingFromParent
+        {
+            delegate?.allLocationsViewControllerDelegateDidBackAction()
+        }
     }
 }
 
-// MARK: - User Actions
-extension AllLocationsViewController
-{
-    @IBAction func backTap(_ sender: Any)
-    {
-        self.delegate?.allLocationsViewControllerDelegateDidBackAction()
-    }
-}
-
+// MARK: - UITableViewDataSource
 extension AllLocationsViewController: UITableViewDataSource
 {
     struct Constants {
@@ -75,7 +75,7 @@ extension AllLocationsViewController: UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return self.viewModel.locationViewModels.value.count
+        return viewModel.locationViewModels.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -94,22 +94,37 @@ extension AllLocationsViewController: UITableViewDataSource
     func cunfigureCellWithViewModel(_ cell: LocationTableViewCell, viewModel: LocationViewModel)
     {
         cell.textLabel?.text    = viewModel.name
-        cell.distanceLabel.text = viewModel.distance
+        cell.distanceLabel.text = distanceFormatter.string(fromDistance: viewModel.distance)
         
-        viewModel.delegate = cell
+        viewModel.delegate = self
     }
 }
 
+// MARK: - UITableViewDelegate
 extension AllLocationsViewController: UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let viewModel = self.viewModel.locationViewModels.value[indexPath.row]
+        let selectedLocationViewModel = viewModel.locationViewModels.value[indexPath.row]
         
-        self.delegate?.allLocationsViewControllerDelegateDidSelectLocation(viewModel)
+        self.delegate?.allLocationsViewControllerDelegateDidSelectLocation(selectedLocationViewModel)
     }
 }
 
-
+// MARK: - LocationViewModelDelegate
+extension AllLocationsViewController: LocationViewModelDelegate
+{
+    func locationViewModelDidChange(_ locationViewModel: LocationViewModel)
+    {
+        guard let row = viewModel.locationViewModels.value.index(of: locationViewModel) else {
+            print("Error: could not find row for locationViewModel")
+            return
+        }
+        
+        let indexPath = IndexPath(row: row, section: 0)
+        
+        tableView.reloadRows(at: [indexPath], with: .none)
+    }
+}
