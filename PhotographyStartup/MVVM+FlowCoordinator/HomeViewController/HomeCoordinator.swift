@@ -43,7 +43,6 @@ class HomeCoordinator: Coordinator
         
         let homeViewController = HomeViewController.storyboardViewController()
         homeViewController.viewModel = homeViewModel
-        homeViewController.viewModel?.delegate = homeViewController
         homeViewController.delegate = self
         
         presenter.pushViewController(homeViewController, animated: true)

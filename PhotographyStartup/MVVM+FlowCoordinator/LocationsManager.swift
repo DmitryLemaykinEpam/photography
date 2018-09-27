@@ -192,7 +192,7 @@ extension LocationsManager: NSFetchedResultsControllerDelegate
             self.delegate?.locationRemoved(location)
             
         case .update:
-            self.delegate?.locationUpdated(location, indexPath: indexPath)
+            self.delegate?.locationUpdated(location, indexPath: newIndexPath)
             
         case .move:
             // Do nothing

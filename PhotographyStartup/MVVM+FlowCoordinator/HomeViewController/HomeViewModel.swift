@@ -10,26 +10,13 @@ import Foundation
 import MapKit
 import Bond
 
-protocol HomeViewModelDelegate: class
-{
-    func locationAdded(_ locationViewModel: LocationViewModel)
-    func locationUpdated(_ locationViewModel: LocationViewModel)
-    func locationRemoved(_ locationViewModel: LocationViewModel)
-    func locationsReloaded()
-}
-
 class HomeViewModel
 {
-    var error: Error?
-    var refreshing = false
     var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
-    
-    var visibleLocationViewModels = [LocationViewModel]()
+    var visibleLocationViewModels = MutableObservableArray<LocationViewModel>([])
     
     private let locationsManager: LocationsManager
     private let userLocationManager: UserLocationManager
-    
-    weak var delegate: HomeViewModelDelegate?
     
     init(locationsManager: LocationsManager, userLocationManager: UserLocationManager)
     {
@@ -56,13 +43,20 @@ class HomeViewModel
 // MARK - Visible locations
 extension HomeViewModel
 {
-    func locationViewModelFor(name: String, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
+    func locationViewModelFor(name: String??, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
     {
-        for locationViewModel in visibleLocationViewModels
+        for locationViewModel in visibleLocationViewModels.array
         {
-            if locationViewModel.name == name && locationViewModel.coordinate == coordinate
+            if locationViewModel.coordinate == coordinate
             {
-                return locationViewModel
+                if locationViewModel.name == nil && name == nil
+                {
+                    return locationViewModel
+                }
+                else if locationViewModel.name == name
+                {
+                    return locationViewModel
+                }  
             }
         }
 
@@ -99,15 +93,30 @@ extension HomeViewModel: LocationsManagerDelegate
     {
         let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
         visibleLocationViewModels.append(locationViewModel)
-        self.delegate?.locationAdded(locationViewModel)
     }
     
     func locationRemoved(_ location: Location)
     {
-        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
-        visibleLocationViewModels.remove(locationViewModel)
+        var locationViewModelIndex: Int?
+        for index in 0..<visibleLocationViewModels.array.count
+        {
+            let locationViewModel = visibleLocationViewModels.array[index]
+            
+            if locationViewModel.name == location.name &&
+               locationViewModel.coordinate.latitude == location.lat &&
+               locationViewModel.coordinate.longitude == location.lon &&
+               locationViewModel.notes == location.notes
+            {
+                locationViewModelIndex = index
+                break
+            }
+        }
         
-        self.delegate?.locationRemoved(locationViewModel)
+        guard let indexToRemove = locationViewModelIndex else {
+            return
+        }
+        
+        visibleLocationViewModels.remove(at: indexToRemove)
     }
     
     func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
@@ -117,29 +126,66 @@ extension HomeViewModel: LocationsManagerDelegate
             return
         }
         
-        let updatedLocationViewModel = visibleLocationViewModels[indexPath.row]
+        let index = indexPath.row
+        let updatedLocationViewModel = visibleLocationViewModels.array[index]
         updatedLocationViewModel.updatedName = updatedLocation.name
         updatedLocationViewModel.updatedNotes = updatedLocation.notes
         updatedLocationViewModel.updatedCoordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
             , longitude: updatedLocation.lon)
         
-        self.delegate?.locationUpdated(updatedLocationViewModel)
+        visibleLocationViewModels.batchUpdate { (array) in
+            array[index] = updatedLocationViewModel
+        }
+        
+        updatedLocationViewModel.applyUpdates()
     }
     
     func locationsReloaded()
     {
-        visibleLocationViewModels.removeAll()
-        
         guard let visibleLocations = locationsManager.visibleLocations() else {
             return
         }
-        
+
+        // View models added by portions, not one after another
+        var locationViewModelsToShow = [LocationViewModel]()
         for location in visibleLocations
         {
             let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
-            visibleLocationViewModels.append(locationViewModel)
+            locationViewModelsToShow.append(locationViewModel)
         }
         
-        self.delegate?.locationsReloaded()
+        // Working not as expected
+        //visibleLocationViewModels2.replace(with: locationViewModelsToShow, performDiff: true)
+        
+        var locationViewModelsToRemove = [LocationViewModel]()
+        for locationViewModel in visibleLocationViewModels.array
+        {
+            if !locationViewModelsToShow.contains(locationViewModel)
+            {
+                locationViewModelsToRemove.append(locationViewModel)
+            }
+        }
+        
+        var locationViewModelsToAdd = [LocationViewModel]()
+        for locationViewModel in locationViewModelsToShow
+        {
+            if !visibleLocationViewModels.array.contains(locationViewModel)
+            {
+                locationViewModelsToAdd.append(locationViewModel)
+            }
+        }
+
+        for locationViewModelToRemove in locationViewModelsToRemove
+        {
+            if let index = visibleLocationViewModels.array.index(of: locationViewModelToRemove)
+            {
+                visibleLocationViewModels.remove(at: index)
+            }
+        }
+        
+        if locationViewModelsToAdd.count > 0
+        {
+            visibleLocationViewModels.insert(contentsOf: locationViewModelsToAdd, at: 0)
+        }
     }
 }

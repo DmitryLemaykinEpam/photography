@@ -26,6 +26,9 @@ class HomeViewController: UIViewController
     
     var selectedLocationViewModel: LocationViewModel?
     
+    // These annotations match Location ViewModels from viewModel
+    private var annotations = [MKAnnotation]()
+    
     struct Constants {
         static let CustomAnnotationReuseId = "customAnnotationReuseId"
     }
@@ -35,7 +38,6 @@ class HomeViewController: UIViewController
         super.viewDidLoad()
         
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: Constants.CustomAnnotationReuseId)
-        //mapView.zoom(toCenterCoordinate: viewModel.userCoordinate, zoomLevel: 10)
         
         bindViewModel()
     }
@@ -53,6 +55,84 @@ class HomeViewController: UIViewController
             let region = MKCoordinateRegion(center: userCoordinate, span: span)
             self.mapView.setRegion(region, animated: true)
         }
+        
+        viewModel.visibleLocationViewModels.observeNext { observableArrayEvent in
+            
+            switch observableArrayEvent.change
+            {
+            case .reset:
+                print("reset")
+                self.annotations.removeAll()
+                
+            case .inserts(let indexes):
+                print("inserts: \(indexes)")
+                
+                // Avoiding indexe shifting in insert by going from lowest to higest index
+                var annotationsToAdd = [MKAnnotation]()
+                for indexOfIndex in 0..<indexes.count
+                {
+                    let index = indexes[indexOfIndex]
+                    
+                    let locationViewModel = observableArrayEvent.source.array[index]
+                    
+                    let annotation = MKPointAnnotation.createFor(locationViewModel)
+                    
+                    self.annotations.insert(annotation, at: index)
+                    annotationsToAdd.append(annotation)
+                }
+                self.mapView.addAnnotations(annotationsToAdd)
+                
+            case .deletes(let indexes):
+                print("deletes: \(indexes)")
+                // Avoiding indexe shifting in deletes by going from higest to lowest index
+                var annotationsToRemove = [MKAnnotation]()
+                for indexOfIndex in (0..<indexes.count).reversed()
+                {
+                    let index = indexes[indexOfIndex]
+                    
+                    let annotationToRemove = self.annotations.remove(at: index)
+                    annotationsToRemove.append(annotationToRemove)
+                }
+                self.mapView.removeAnnotations(annotationsToRemove)
+                
+            case .updates(let indexes):
+                print("updates: \(indexes)")
+                
+                var annotationsToRemove = [MKAnnotation]()
+                var annotationsToAdd = [MKAnnotation]()
+                for index in indexes
+                {
+                    let locationViewModel = observableArrayEvent.source.array[index]
+                    if self.selectedLocationViewModel == locationViewModel
+                    {
+                        if locationViewModel.updatedName == nil
+                        {
+                            continue
+                        }
+                    }
+                    
+                    let annotationToRemove = self.annotations.remove(at: index)
+                    annotationsToRemove.append(annotationToRemove)
+                    
+                   
+                    let annotationToAdd = MKPointAnnotation.createFor(locationViewModel)
+                    
+                    self.annotations.insert(annotationToAdd, at: index)
+                    annotationsToAdd.append(annotationToAdd)
+                }
+                self.mapView.removeAnnotations(annotationsToRemove)
+                self.mapView.addAnnotations(annotationsToAdd)
+                
+            case .move(let fromIndex, let toIndex):
+                print("move")
+                swap(&self.annotations[fromIndex], &self.annotations[toIndex])
+            default:
+                // case .beginBatchEditing:
+                // case .endBatchEditing:
+                break
+            }
+            
+        }.dispose(in: bag)
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -66,17 +146,17 @@ class HomeViewController: UIViewController
     {
         super.viewDidAppear(animated)
         
-        viewModel?.startTarckingUserLoaction()
+        viewModel.startTarckingUserLoaction()
     }
     
     override func viewDidDisappear(_ animated: Bool)
     {
         super.viewDidDisappear(animated)
         
-        //viewModel?.stopTarckingUserLoaction()
+        viewModel.stopTarckingUserLoaction()
     }
     
-    func addAnnotations(_ locationViewModels : [LocationViewModel])
+    func addAnnotations(_ locationViewModels: [LocationViewModel])
     {
         var annotations = [MKPointAnnotation]()
         for location in locationViewModels
@@ -104,6 +184,22 @@ extension HomeViewController
             sender.isEnabled = true
         }
         
+        if let selectedLocationViewModel = self.selectedLocationViewModel
+        {
+            defer {
+                self.selectedLocationViewModel = nil
+            }
+            
+            guard let index = viewModel.visibleLocationViewModels.array.index(of:selectedLocationViewModel) else {
+                print("Error: Could not get index for selectedLocationViewModel")
+                return
+            }
+            
+            let annotation = annotations[index]
+            mapView.deselectAnnotation(annotation, animated: true)
+            return
+        }
+        
         let touchLocation = sender.location(in: mapView)
         let locationCoordinate = mapView.convert(touchLocation, toCoordinateFrom: mapView)
         
@@ -123,7 +219,7 @@ extension HomeViewController
 }
 
 // MARK - MKMapViewDelegate
-extension HomeViewController : MKMapViewDelegate
+extension HomeViewController: MKMapViewDelegate
 {
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool)
     {
@@ -162,14 +258,9 @@ extension HomeViewController : MKMapViewDelegate
             return
         }
         
-        guard let name = annotation.title as? String else {
-            print("Error: annotation does not have title")
-            return
-        }
-        
-        self.selectedLocationViewModel = viewModel.locationViewModelFor(name: name, coordinate: annotation.coordinate)
+        self.selectedLocationViewModel = viewModel.locationViewModelFor(name: annotation.title, coordinate: annotation.coordinate)
         guard let selectedLocationViewModel = self.selectedLocationViewModel else {
-            print("Error: don't have selected location")
+            print("Error: could not select location ViewModel")
             return
         }
         
@@ -178,8 +269,14 @@ extension HomeViewController : MKMapViewDelegate
     
     func showLocationActionSheet(_ locationViewModel: LocationViewModel, annotationView: MKAnnotationView?)
     {
-        let title = "What to do with this location?"
-        let message = "Edit location: \(String(describing: locationViewModel.name))?"
+        let title = "Location Selected"
+        
+        var message = "What to do with this location?"
+        if let locationName = locationViewModel.name
+        {
+            message.append("\n\(locationName)")
+        }
+        
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "Edit", style: .default, handler: { action in
@@ -187,7 +284,7 @@ extension HomeViewController : MKMapViewDelegate
         })
         alertController.addAction(editAction)
         
-        let dafaultAction = UIAlertAction(title: "Move manualy", style: .default, handler: nil)
+        let dafaultAction = UIAlertAction(title: "Move manualy", style: .cancel, handler: nil)
         alertController.addAction(dafaultAction)
         
         let removeAction = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
@@ -246,71 +343,3 @@ extension HomeViewController : MKMapViewDelegate
         return nil
     }
 }
-
-extension HomeViewController: HomeViewModelDelegate
-{
-    func locationAdded(_ locationViewModel: LocationViewModel)
-    {
-        addAnnotations([locationViewModel])
-    }
- 
-    func locationRemoved(_ locationViewModel: LocationViewModel)
-    {
-        guard let annotation = visibleAnnotationFor(locationViewModel) else {
-            return
-        }
-        
-        mapView.removeAnnotation(annotation)
-    }
-    
-    func locationUpdated(_ locationViewModel: LocationViewModel)
-    {
-        guard let annotation = visibleAnnotationFor(locationViewModel) else {
-            return
-        }
-        mapView.removeAnnotation(annotation)
-        
-        locationViewModel.applyUpdates()
-        
-        addAnnotations([locationViewModel])
-    }
-
-    func locationsReloaded()
-    {
-        guard self.viewModel.visibleLocationViewModels.count > 0 else {
-            mapView.removeAnnotations(mapView.annotations)
-            return
-        }
-        
-        // Will try to reuse as much existed annotations as possible,
-        // this optimisation provide faster reload of annotations when user movign map
-        var annotationsToRemove = mapView.annotations
-        var locationsToPresent = [LocationViewModel]()
-        
-        for locationViewModel in self.viewModel.visibleLocationViewModels
-        {
-            var selectedAnnotationIndex : Int?
-            for annotationIndex in 0..<annotationsToRemove.count
-            {
-                let annotation = annotationsToRemove[annotationIndex]
-                
-                if annotation.isForLocationViewModel(locationViewModel)
-                {
-                    selectedAnnotationIndex = annotationIndex
-                    break
-                }
-            }
-            
-            guard let annotationIndex = selectedAnnotationIndex else {
-                locationsToPresent.append(locationViewModel)
-                continue
-            }
-            
-            annotationsToRemove.remove(at: annotationIndex)
-        }
-        mapView.removeAnnotations(annotationsToRemove)
-        
-        addAnnotations(locationsToPresent)
-    }
-}
-
