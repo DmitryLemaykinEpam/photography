@@ -93,7 +93,19 @@ extension AllLocationsViewController: UITableViewDataSource
     
     func cunfigureCellWithViewModel(_ cell: LocationTableViewCell, viewModel: LocationViewModel)
     {
-        cell.textLabel?.text    = viewModel.name
+        var titleAttributedString: NSAttributedString?
+        if let name = viewModel.name
+        {
+            titleAttributedString = NSAttributedString(string: name, attributes:
+                [NSAttributedString.Key.foregroundColor: UIColor.black,
+                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+        } else {
+            titleAttributedString = NSAttributedString(string:"Name is not yet set", attributes:
+                [NSAttributedString.Key.foregroundColor: UIColor.lightGray,
+                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+        }
+        
+        cell.textLabel?.attributedText = titleAttributedString
         cell.distanceLabel.text = distanceFormatter.string(fromDistance: viewModel.distance)
         
         viewModel.delegate = self

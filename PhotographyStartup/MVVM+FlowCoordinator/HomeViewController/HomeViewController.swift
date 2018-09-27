@@ -206,7 +206,6 @@ extension HomeViewController
         print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
         
         let newLocationViewModel = viewModel.createNewLocationViewModel()
-        newLocationViewModel.updatedName = ""
         newLocationViewModel.updatedCoordinate = locationCoordinate
         
         let _ = newLocationViewModel.saveUpdates()
