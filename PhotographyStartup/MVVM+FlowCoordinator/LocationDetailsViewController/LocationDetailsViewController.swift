@@ -7,7 +7,14 @@
 //
 
 import UIKit
-import MagicalRecord
+
+protocol LocationDetailsViewModelProtocol
+{
+    var name: String?{get set}
+    var notes: String?{get set}
+    
+    func save()
+}
 
 protocol LocationDetailsViewControllerDelegate: class
 {
@@ -18,7 +25,16 @@ class LocationDetailsViewController: UITableViewController
 {
     weak var delegate: LocationDetailsViewControllerDelegate?
     
-    var viewModel: LocationViewModel!
+    private var _viewModel: LocationDetailsViewModelProtocol!
+    var viewModel: LocationDetailsViewModelProtocol!
+    {
+        get {
+            return _viewModel
+        }
+        set {
+            _viewModel = newValue
+        }
+    }
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
@@ -28,10 +44,10 @@ class LocationDetailsViewController: UITableViewController
         super.viewDidLoad()
         
         let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: .save)
-        self.navigationItem.rightBarButtonItem = saveBarButtonItem
+        navigationItem.rightBarButtonItem = saveBarButtonItem
         
-        self.nameTextField.text = viewModel.name
-        self.descriptionTextView.text = viewModel.notes
+        nameTextField.text = viewModel.name
+        descriptionTextView.text = viewModel.notes
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -53,15 +69,11 @@ class LocationDetailsViewController: UITableViewController
 
     @objc func save()
     {
-        viewModel.updatedName = nameTextField.text
-        viewModel.updatedNotes = descriptionTextView.text
+        viewModel.name = nameTextField.text
+        viewModel.notes = descriptionTextView.text
         
-        guard let errorMessage = viewModel.saveUpdates() else {
-            self.navigateBack()
-            return
-        }
-        
-        showSaveResultErrorAlert(errorMessage)
+        viewModel.save()
+        navigateBack()
     }
     
     func showSaveResultErrorAlert(_ errorMessage: String)
@@ -76,14 +88,14 @@ class LocationDetailsViewController: UITableViewController
             popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.maxY, width: 0, height: 0)
         }
         
-        self.present(alertController, animated: true)
+        present(alertController, animated: true)
     }
     
     func navigateBack()
     {
-        self.delegate?.locationDetailsViewControllerDidBackAction()
+        delegate?.locationDetailsViewControllerDidBackAction()
         
-        _ = self.navigationController?.popViewController(animated: true)
+        _ = navigationController?.popViewController(animated: true)
     }
 }
 

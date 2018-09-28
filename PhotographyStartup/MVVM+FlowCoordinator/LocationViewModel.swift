@@ -8,78 +8,43 @@
 
 import UIKit
 import MapKit
-import MagicalRecord
+import Bond
 
-protocol LocationViewModelDelegate: class
+class LocationViewModel: LocationDetailsViewModelProtocol
 {
-    func locationViewModelDidChange(_ locationViewModel: LocationViewModel)
-}
-
-class LocationViewModel
-{
-    weak var delegate: LocationViewModelDelegate?
     var locationsManager: LocationsManager!
     
+    let locationId: String
     var coordinate: CLLocationCoordinate2D
     var name: String?
     var notes: String?
     var distance: Double = 0
+    
+    var removed = Observable<Bool>(false)
 
-    // Updated fields
-    var updatedCoordinate: CLLocationCoordinate2D?
-    var updatedName: String?
-    var updatedNotes: String?
-    
-    init(locationsManager: LocationsManager, lat: CLLocationDegrees, lon: CLLocationDegrees)
+    init(locationsManager: LocationsManager!, location: Location)
     {
-        self.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        self.locationId = location.locationId()
         self.locationsManager = locationsManager
-    }
-    
-    convenience init(locationsManager: LocationsManager!, location: Location)
-    {
-        self.init(locationsManager: locationsManager, lat: location.lat, lon: location.lon)
+        self.coordinate = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
         self.name = location.name
         self.notes = location.notes
     }
     
-    func applyUpdates()
+    func save()
     {
-        name = updatedName
-        notes = updatedNotes
-        
-        guard let updatedCoordinate = updatedCoordinate else {
+        guard let location = locationsManager.locationFor(locationId: locationId) else {
+            print("Error: could not save location because locationId: \(locationId) not found")
             return
         }
-        coordinate = updatedCoordinate
-    }
-    
-    func saveUpdates() -> String?
-    {
-        var location = locationsManager.locationFor(name: name, coordinate: coordinate)
-        if location == nil
-        {
-            location = locationsManager.createLocation()
-        }
         
-        guard let existedLocation = location else
-        {
-            return "Error: could not create location for ViewModel"
-        }
-        
-        existedLocation.name = updatedName
-        existedLocation.notes = updatedNotes
-        
-        if let updatedCoordinate =  self.updatedCoordinate
-        {
-            existedLocation.lat = updatedCoordinate.latitude
-            existedLocation.lon = updatedCoordinate.longitude
-        }
+        location.name = name
+        location.notes = notes
+        location.lat = coordinate.latitude
+        location.lon = coordinate.longitude
         
         locationsManager.saveToPersistentStore()
-        applyUpdates()
-        
-        return nil
+        return
     }
 }
 
@@ -87,12 +52,7 @@ extension LocationViewModel: Equatable
 {
     public static func == (lhs: LocationViewModel, rhs: LocationViewModel) -> Bool
     {
-        if lhs.name == rhs.name &&
-           lhs.coordinate == rhs.coordinate &&
-           lhs.notes == rhs.notes
-        {
-            return true
-        }
-        return false
+        let result = lhs.locationId == rhs.locationId ? true : false
+        return result
     }
 }

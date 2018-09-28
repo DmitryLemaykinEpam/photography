@@ -10,6 +10,16 @@ import UIKit
 import MapKit
 import Bond
 
+protocol AllLocationsViewModelProtocol
+{
+    var locationViewModels: Observable<[LocationViewModel]>{get}
+    var userCoordinate: Observable<CLLocationCoordinate2D?>{get}
+    
+    func fetch()
+    func startTrackingUserLoaction()
+    func stopTrackingUserLoaction()
+}
+
 protocol AllLocationsViewControllerDelegate: class
 {
     func allLocationsViewControllerDelegateDidSelectLocation(_ location: LocationViewModel)
@@ -18,27 +28,34 @@ protocol AllLocationsViewControllerDelegate: class
 
 class AllLocationsViewController: UIViewController
 {
-    var viewModel: AllLocationsViewModel!
     weak var delegate: AllLocationsViewControllerDelegate?
+    
+    private var _viewModel: AllLocationsViewModelProtocol!
+    var viewModel: AllLocationsViewModelProtocol!
+    {
+        get {
+            return _viewModel
+        }
+        set {
+            _viewModel = newValue
+            bindViewModel()
+        }
+    }
     
     @IBOutlet weak var tableView: UITableView!
     
     let distanceFormatter = MKDistanceFormatter()
     
-    override func viewDidLoad()
-    {
-        super.viewDidLoad()
-        
-        bindViewModel()
-    }
-    
     func bindViewModel()
     {
-        viewModel.locationViewModels.bind(to: self) { strongSelf, _ in
-            strongSelf.tableView.reloadData()
+        _viewModel.locationViewModels.bind(to: self) { strongSelf, _ in
+            guard let tableView = strongSelf.tableView else {
+                return
+            }
+            tableView.reloadData()
         }
         
-        viewModel.userCoordinate.bind(to: self) { strongSelf, coordinate in
+        _viewModel.userCoordinate.bind(to: self) { strongSelf, coordinate in
             print("Coordinate: ", String(describing: coordinate))
         }
     }
@@ -107,8 +124,6 @@ extension AllLocationsViewController: UITableViewDataSource
         
         cell.textLabel?.attributedText = titleAttributedString
         cell.distanceLabel.text = distanceFormatter.string(fromDistance: viewModel.distance)
-        
-        viewModel.delegate = self
     }
 }
 
@@ -122,21 +137,5 @@ extension AllLocationsViewController: UITableViewDelegate
         let selectedLocationViewModel = viewModel.locationViewModels.value[indexPath.row]
         
         self.delegate?.allLocationsViewControllerDelegateDidSelectLocation(selectedLocationViewModel)
-    }
-}
-
-// MARK: - LocationViewModelDelegate
-extension AllLocationsViewController: LocationViewModelDelegate
-{
-    func locationViewModelDidChange(_ locationViewModel: LocationViewModel)
-    {
-        guard let row = viewModel.locationViewModels.value.index(of: locationViewModel) else {
-            print("Error: could not find row for locationViewModel")
-            return
-        }
-        
-        let indexPath = IndexPath(row: row, section: 0)
-        
-        tableView.reloadRows(at: [indexPath], with: .none)
     }
 }

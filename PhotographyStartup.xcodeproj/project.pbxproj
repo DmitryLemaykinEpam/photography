@@ -23,6 +23,7 @@
 		3F267DC221593630005378BF /* LocationDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F267DBF21593630005378BF /* LocationDetailsViewController.swift */; };
 		3F267DC42159365A005378BF /* HomeViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F267DC32159365A005378BF /* HomeViewController.storyboard */; };
 		3F267DC621593673005378BF /* AllLocationsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F267DC521593673005378BF /* AllLocationsViewController.storyboard */; };
+		3F267DC8215E655B005378BF /* Location+LocationId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F267DC7215E655B005378BF /* Location+LocationId.swift */; };
 		3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */; };
 		3F34C03521526ACA009E0C8E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03421526ACA009E0C8E /* Coordinator.swift */; };
 		3F34C03721526C1F009E0C8E /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */; };
@@ -43,7 +44,6 @@
 		3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB99C2146603D00020D5D /* PhotographyStartup.xcdatamodeld */; };
 		3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */; };
 		3FC4D5B7214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */; };
-		3FC4D5B9214A8D1600D88F17 /* MKAnnotation+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */; };
 		3FC4D5BB214AB2A100D88F17 /* CoreDataTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */; };
 		3FF60F262146C4C50079DB5C /* DefaultLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF60F252146C4C50079DB5C /* DefaultLocation.swift */; };
 		3FFBEB3F214809FE00F32856 /* UIViewController+Storyboardable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBEB3E214809FE00F32856 /* UIViewController+Storyboardable.swift */; };
@@ -89,6 +89,7 @@
 		3F267DBF21593630005378BF /* LocationDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewController.swift; sourceTree = "<group>"; };
 		3F267DC32159365A005378BF /* HomeViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = HomeViewController.storyboard; sourceTree = "<group>"; };
 		3F267DC521593673005378BF /* AllLocationsViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = AllLocationsViewController.storyboard; sourceTree = "<group>"; };
+		3F267DC7215E655B005378BF /* Location+LocationId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Location+LocationId.swift"; sourceTree = "<group>"; };
 		3F34C03121526640009E0C8E /* UserDefaults+LaunchesCounter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+LaunchesCounter.swift"; sourceTree = "<group>"; };
 		3F34C03421526ACA009E0C8E /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3F34C03621526C1F009E0C8E /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
@@ -112,7 +113,6 @@
 		3FAC1BCB214942A2007D7B59 /* LocationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsManager.swift; sourceTree = "<group>"; };
 		3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+RemoveObject.swift"; sourceTree = "<group>"; };
 		3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKPointAnnotation+CustomLocation.swift"; sourceTree = "<group>"; };
-		3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKAnnotation+Location.swift"; sourceTree = "<group>"; };
 		3FC4D5BA214AB2A100D88F17 /* CoreDataTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTestCase.swift; sourceTree = "<group>"; };
 		3FF60F252146C4C50079DB5C /* DefaultLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLocation.swift; sourceTree = "<group>"; };
 		3FFBEB3E214809FE00F32856 /* UIViewController+Storyboardable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Storyboardable.swift"; sourceTree = "<group>"; };
@@ -162,8 +162,8 @@
 				3FFBEB3E214809FE00F32856 /* UIViewController+Storyboardable.swift */,
 				3FC4D5B3214A862500D88F17 /* Array+RemoveObject.swift */,
 				3FC4D5B6214A8AAD00D88F17 /* MKPointAnnotation+CustomLocation.swift */,
-				3FC4D5B8214A8D1600D88F17 /* MKAnnotation+Location.swift */,
 				3F267DBA2158F956005378BF /* CLLocationCoordinate2D+Equatable.swift */,
+				3F267DC7215E655B005378BF /* Location+LocationId.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -408,6 +408,7 @@
 				3FC4D5B2214A82E800D88F17 /* PhotographyStartup.xcdatamodeld in Sources */,
 				3F267DC221593630005378BF /* LocationDetailsViewController.swift in Sources */,
 				3FAC1BCC214942A2007D7B59 /* LocationsManager.swift in Sources */,
+				3F267DC8215E655B005378BF /* Location+LocationId.swift in Sources */,
 				3F1DFD212147C25C00E6695F /* AllLocationsViewController.swift in Sources */,
 				3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */,
 				3F1DFD292147F53200E6695F /* LocationViewModel.swift in Sources */,
@@ -415,7 +416,6 @@
 				3F1DFD2B2147FDD100E6695F /* LocationTableViewCell.swift in Sources */,
 				3F34C03221526641009E0C8E /* UserDefaults+LaunchesCounter.swift in Sources */,
 				3FFBEB3F214809FE00F32856 /* UIViewController+Storyboardable.swift in Sources */,
-				3FC4D5B9214A8D1600D88F17 /* MKAnnotation+Location.swift in Sources */,
 				3FC4D5B5214A86A900D88F17 /* Array+RemoveObject.swift in Sources */,
 				3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */,
 				3F34C04321539F05009E0C8E /* HomeCoordinator.swift in Sources */,

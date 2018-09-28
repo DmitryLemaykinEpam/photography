@@ -25,7 +25,12 @@ class UserLocationManager: NSObject
 
     func startTarckingUserLoaction()
     {
-        clLocationManager.requestWhenInUseAuthorization()
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() == .authorizedAlways {
+            clLocationManager.startUpdatingLocation()
+        } else {
+            clLocationManager.requestWhenInUseAuthorization()
+        }
     }
     
     func stopTarckingUserLoaction()
@@ -41,10 +46,10 @@ extension UserLocationManager : CLLocationManagerDelegate
         switch status
         {
         case .notDetermined:
-            clLocationManager.stopUpdatingLocation()
+            tracking.value = false
             
         case .denied:
-            clLocationManager.stopUpdatingLocation()
+            tracking.value = false
             
         case .authorizedAlways:
             clLocationManager.startUpdatingLocation()
@@ -52,8 +57,9 @@ extension UserLocationManager : CLLocationManagerDelegate
         case .authorizedWhenInUse:
             clLocationManager.startUpdatingLocation()
             
-        case .restricted:
-            clLocationManager.stopUpdatingLocation()
+        default:
+            // Do nothing
+            break
         }
     }
     

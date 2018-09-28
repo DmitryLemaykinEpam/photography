@@ -28,39 +28,25 @@ class HomeViewModel
         // Path trough of bindings
         self.userCoordinate = self.userLocationManager.userCoordinate
     }
-    
+}
+
+// MARK - HomeViewModelProtocol
+extension HomeViewModel: HomeViewModelProtocol
+{
     func startTarckingUserLoaction()
     {
         userLocationManager.startTarckingUserLoaction()
     }
- 
+    
     func stopTarckingUserLoaction()
     {
         userLocationManager.stopTarckingUserLoaction()
     }
-}
-
-// MARK - Visible locations
-extension HomeViewModel
-{
+    
     func locationViewModelFor(name: String??, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
     {
-        for locationViewModel in visibleLocationViewModels.array
-        {
-            if locationViewModel.coordinate == coordinate
-            {
-                if locationViewModel.name == nil && name == nil
-                {
-                    return locationViewModel
-                }
-                else if locationViewModel.name == name
-                {
-                    return locationViewModel
-                }  
-            }
-        }
-
-        return nil
+        let locationViewModel = visibleLocationViewModels.array.first{ $0.coordinate == coordinate && $0.name == name }
+        return locationViewModel
     }
     
     func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
@@ -68,15 +54,20 @@ extension HomeViewModel
         locationsManager.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
-    func createNewLocationViewModel() -> LocationViewModel
+    func createLocationViewModel() -> LocationViewModel?
     {
-        let locationViewModel = LocationViewModel(locationsManager: locationsManager, lat: 0, lon: 0)
+        guard let newLocation = locationsManager.createLocation() else {
+            print("Error: could not create location for view model")
+            return nil
+        }
+        
+        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: newLocation)
         return locationViewModel
     }
     
     func removeLocation(_ locationViewModel: LocationViewModel)
     {
-        guard let location = locationsManager.locationFor(name: locationViewModel.name, coordinate: locationViewModel.coordinate) else {
+        guard let location = locationsManager.locationFor(locationId: locationViewModel.locationId ) else {
             print("Error: could not get Locations for LocationsViewModel")
             return
         }
@@ -97,25 +88,16 @@ extension HomeViewModel: LocationsManagerDelegate
     
     func locationRemoved(_ location: Location)
     {
-        var locationViewModelIndex: Int?
-        for index in 0..<visibleLocationViewModels.array.count
-        {
-            let locationViewModel = visibleLocationViewModels.array[index]
-            
-            if locationViewModel.name == location.name &&
-               locationViewModel.coordinate.latitude == location.lat &&
-               locationViewModel.coordinate.longitude == location.lon &&
-               locationViewModel.notes == location.notes
-            {
-                locationViewModelIndex = index
-                break
-            }
-        }
+        let locationId = location.locationId()
         
-        guard let indexToRemove = locationViewModelIndex else {
+        guard let locationViewModelToRemove = visibleLocationViewModels.array.first(where: { $0.locationId == locationId }),
+              let indexToRemove = visibleLocationViewModels.array.index(of: locationViewModelToRemove)
+        else {
+            print("Error: could not get locationViewModelToRemove for location: \(location)")
             return
         }
         
+        locationViewModelToRemove.removed.value = true
         visibleLocationViewModels.remove(at: indexToRemove)
     }
     
@@ -128,16 +110,14 @@ extension HomeViewModel: LocationsManagerDelegate
         
         let index = indexPath.row
         let updatedLocationViewModel = visibleLocationViewModels.array[index]
-        updatedLocationViewModel.updatedName = updatedLocation.name
-        updatedLocationViewModel.updatedNotes = updatedLocation.notes
-        updatedLocationViewModel.updatedCoordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
+        updatedLocationViewModel.name = updatedLocation.name
+        updatedLocationViewModel.notes = updatedLocation.notes
+        updatedLocationViewModel.coordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
             , longitude: updatedLocation.lon)
         
         visibleLocationViewModels.batchUpdate { (array) in
             array[index] = updatedLocationViewModel
         }
-        
-        updatedLocationViewModel.applyUpdates()
     }
     
     func locationsReloaded()

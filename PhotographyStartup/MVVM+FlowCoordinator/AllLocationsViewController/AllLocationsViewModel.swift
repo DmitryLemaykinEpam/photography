@@ -26,7 +26,11 @@ class AllLocationsViewModel
         // Binding path through
         self.userCoordinate = self.userLocationManager.userCoordinate
     }
-    
+}
+
+// MARK - AllLocationsViewModelProtocol
+extension AllLocationsViewModel: AllLocationsViewModelProtocol
+{
     func fetch()
     {
         DispatchQueue.global(qos: .userInitiated).async
@@ -65,11 +69,7 @@ class AllLocationsViewModel
             self.locationViewModels.value = viewModels
         }
     }
-}
-
-// MARK - User coordinate
-extension AllLocationsViewModel
-{
+    
     func startTrackingUserLoaction()
     {
         userLocationManager.startTarckingUserLoaction()

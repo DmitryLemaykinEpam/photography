@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+
 import MagicalRecord
 import Bond
 
@@ -24,6 +25,9 @@ protocol LocationsManagerDelegate
 class LocationsManager : NSObject
 {
     var delegate: LocationsManagerDelegate?
+    
+    // In order to get notified of changes in Location model, all CRUD operations should use same NSManagedObjectContext
+    private let context = NSManagedObjectContext.mr_default()
     
     override init()
     {
@@ -59,7 +63,7 @@ class LocationsManager : NSObject
             
             for defaultLocation in defaultLocations.locations
             {
-                guard let newLocation = Location.mr_createEntity(in: NSManagedObjectContext.mr_default()) else {
+                guard let newLocation = Location.mr_createEntity(in: context) else {
                     return
                 }
                 
@@ -68,7 +72,7 @@ class LocationsManager : NSObject
                 newLocation.lon = defaultLocation.lng
             }
             
-            NSManagedObjectContext.mr_default().mr_saveToPersistentStore { (contextDidSave, error) in
+            context.mr_saveToPersistentStore { (contextDidSave, error) in
                 if contextDidSave == false
                 {
                     print("Error: \(error.debugDescription)")
@@ -84,8 +88,6 @@ class LocationsManager : NSObject
     
     private lazy var visibleLocationsFetchedResultsController : NSFetchedResultsController<NSFetchRequestResult> =
     {
-        let context = NSManagedObjectContext.mr_default()
-        
         let fetchRequest = Location.mr_requestAllSorted(by: "name", ascending: false, in: context)
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
@@ -95,23 +97,21 @@ class LocationsManager : NSObject
     
     func createLocation() -> Location?
     {
-        let context = visibleLocationsFetchedResultsController.managedObjectContext
-        
         guard let newLocation = Location.mr_createEntity(in: context) else {
             print("Error: New CustomLocation could not be created")
             return nil
         }
 
         // Recomended but less convenient
-//        var newCustomLocation : CustomLocation?
-//        MagicalRecord.save(blockAndWait: { (context) in
-//            guard let customLocation = CustomLocation.mr_createEntity(in: context) else {
-//                print("Error: New CustomLocation could not be created")
-//                return
-//            }
-//
-//            newCustomLocation = customLocation
-//        })
+        //   var newCustomLocation : CustomLocation?
+        //   MagicalRecord.save(blockAndWait: { (context) in
+        //       guard let customLocation = CustomLocation.mr_createEntity(in: context) else {
+        //           print("Error: New CustomLocation could not be created")
+        //           return
+        //       }
+        //
+        //       newCustomLocation = customLocation
+        //   })
         
         return newLocation
     }
@@ -135,41 +135,34 @@ class LocationsManager : NSObject
     
     func removeLocation(_ location: Location)
     {
-        let context = NSManagedObjectContext.mr_default()
-        let deletionResult = location.mr_deleteEntity(in: context)
+        let deletionResult = location.mr_deleteEntity()
         if deletionResult == false {
             print("Error: Could not delete selected location")
             return
         }
     }
     
-    func locationFor(name: String?, coordinate: CLLocationCoordinate2D) -> Location?
+    func locationFor(locationId: String) -> Location?
     {
-        guard let fetchRequestResults = visibleLocationsFetchedResultsController.fetchedObjects, fetchRequestResults.count > 0 else {
+        guard let objectIDURL = URL(string: locationId),
+              let coordinator = context.persistentStoreCoordinator,
+              let managedObjectID = coordinator.managedObjectID(forURIRepresentation: objectIDURL) else
+        {
+            print("Error: could not create managedObjectID from locationId: \(locationId)")
             return nil
         }
         
-        for fetchRequestResult in fetchRequestResults
+        guard let location = context.object(with: managedObjectID) as? Location else
         {
-            guard let location = fetchRequestResult as? Location else {
-                print("Error: Could not cast fetchRequestResult to CustomLocation")
-                return nil
-            }
-            
-            if  location.name == name &&
-                location.lat == coordinate.latitude &&
-                location.lon == coordinate.longitude
-            {
-                return location
-            }
+            print("Error: could not find location for \(managedObjectID)")
+            return nil
         }
         
-        return nil
+        return location
     }
     
     func saveToPersistentStore()
     {
-        let context = NSManagedObjectContext.mr_default()
         context.mr_saveToPersistentStoreAndWait()
     }
  }

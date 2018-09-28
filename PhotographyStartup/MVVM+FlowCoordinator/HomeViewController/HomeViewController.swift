@@ -8,6 +8,21 @@
 
 import UIKit
 import MapKit
+import Bond
+
+protocol HomeViewModelProtocol
+{
+    var userCoordinate: Observable<CLLocationCoordinate2D?> {get}
+    var visibleLocationViewModels: MutableObservableArray<LocationViewModel> {get}
+    
+    func startTarckingUserLoaction()
+    func stopTarckingUserLoaction()
+    
+    func createLocationViewModel() -> LocationViewModel?
+    func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
+    func locationViewModelFor(name: String??, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
+    func removeLocation(_ locationViewModel: LocationViewModel)
+}
 
 protocol HomeViewControllerDelegate: class
 {
@@ -17,8 +32,8 @@ protocol HomeViewControllerDelegate: class
 
 class HomeViewController: UIViewController
 {
-    private var _viewModel: HomeViewModel!
-    var viewModel: HomeViewModel!
+    private var _viewModel: HomeViewModelProtocol!
+    var viewModel: HomeViewModelProtocol!
     {
         get {
             return _viewModel
@@ -52,10 +67,6 @@ class HomeViewController: UIViewController
     
     func bindViewModel()
     {
-//        _viewModel.userCoordinate.bind(to: self) { (BindingExecutionContextProvider & Deallocatable, <#CLLocationCoordinate2D?#>) in
-//            <#code#>
-//        }
-        
         _viewModel.userCoordinate.bind(to: self) { strongSelf, userCoordinate in
             print("userCoordinate: ", String(describing: userCoordinate))
             
@@ -116,39 +127,31 @@ class HomeViewController: UIViewController
                 
                 var annotationsToRemove = [MKAnnotation]()
                 var annotationsToAdd = [MKAnnotation]()
-                for index in indexes
-                {
+                indexes.forEach({ (index) in
                     let locationViewModel = observableArrayEvent.source.array[index]
-                    if self.selectedLocationViewModel == locationViewModel
-                    {
-                        if locationViewModel.updatedName == nil
-                        {
-                            continue
-                        }
-                    }
-                    
+ 
                     let annotationToRemove = self.annotations.remove(at: index)
                     annotationsToRemove.append(annotationToRemove)
                     
-                   
                     let annotationToAdd = MKPointAnnotation.createFor(locationViewModel)
+                    annotationsToAdd.append(annotationToAdd)
                     
                     self.annotations.insert(annotationToAdd, at: index)
-                    annotationsToAdd.append(annotationToAdd)
-                }
+                })
                 self.mapView.removeAnnotations(annotationsToRemove)
                 self.mapView.addAnnotations(annotationsToAdd)
                 
             case .move(let fromIndex, let toIndex):
                 print("move")
-//                let tempAnnotation = self.annotations[fromIndex]
-//                self.annotations[fromIndex] = self.annotations[toIndex]
-//                self.annotations[toIndex] = tempAnnotation
-                swap(&self.annotations[fromIndex], &self.annotations[toIndex])
+                // No need to update annotations itself
+                let tempAnnotation = self.annotations[fromIndex]
+                self.annotations[fromIndex] = self.annotations[toIndex]
+                self.annotations[toIndex] = tempAnnotation
+                // Alternative way
+                //swap(&self.annotations[fromIndex], &self.annotations[toIndex])
                 
             default:
-                // case .beginBatchEditing:
-                // case .endBatchEditing:
+                // Do nothing
                 break
             }
         }.dispose(in: bag)
@@ -199,7 +202,7 @@ extension HomeViewController
             return
         }
         sender.isEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(500)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(300)) {
             sender.isEnabled = true
         }
         
@@ -224,10 +227,12 @@ extension HomeViewController
         
         print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
         
-        let newLocationViewModel = viewModel.createNewLocationViewModel()
-        newLocationViewModel.updatedCoordinate = locationCoordinate
-        
-        let _ = newLocationViewModel.saveUpdates()
+        guard let newLocationViewModel = viewModel.createLocationViewModel() else {
+            print("Error: could not get newLocationViewModel")
+            return
+        }
+        newLocationViewModel.coordinate = locationCoordinate
+        let _ = newLocationViewModel.save()
     }
     
     @IBAction func allLocationsTap(_ sender: Any)
@@ -338,20 +343,12 @@ extension HomeViewController: MKMapViewDelegate
                 return
             }
             
-            selectedLocationViewModel.updatedCoordinate = annotation.coordinate
-            let _ = selectedLocationViewModel.saveUpdates()
+            selectedLocationViewModel.coordinate = annotation.coordinate
+            selectedLocationViewModel.save()
        
         default:
             // Do nothing
             break
         }
-    }
-    
-    func visibleAnnotationFor(_ locationViewModel: LocationViewModel) -> MKAnnotation?
-    {
-        let visibleAnnotations = mapView.visibleAnnotations()
-        let annotation = visibleAnnotations.first{ $0.isForLocationViewModel(locationViewModel) }
-        
-        return annotation
     }
 }
