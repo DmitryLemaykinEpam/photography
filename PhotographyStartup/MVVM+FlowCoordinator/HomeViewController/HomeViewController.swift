@@ -17,7 +17,17 @@ protocol HomeViewControllerDelegate: class
 
 class HomeViewController: UIViewController
 {
+    private var _viewModel: HomeViewModel!
     var viewModel: HomeViewModel!
+    {
+        get {
+            return _viewModel
+        }
+        set {
+            _viewModel = newValue
+            bindViewModel()
+        }
+    }
 
     weak var delegate: HomeViewControllerDelegate?
     
@@ -38,13 +48,15 @@ class HomeViewController: UIViewController
         super.viewDidLoad()
         
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: Constants.CustomAnnotationReuseId)
-        
-        bindViewModel()
     }
     
     func bindViewModel()
     {
-        viewModel.userCoordinate.bind(to: self) { strongSelf, userCoordinate in
+//        _viewModel.userCoordinate.bind(to: self) { (BindingExecutionContextProvider & Deallocatable, <#CLLocationCoordinate2D?#>) in
+//            <#code#>
+//        }
+        
+        _viewModel.userCoordinate.bind(to: self) { strongSelf, userCoordinate in
             print("userCoordinate: ", String(describing: userCoordinate))
             
             guard let userCoordinate = userCoordinate else {
@@ -53,10 +65,14 @@ class HomeViewController: UIViewController
             
             let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
             let region = MKCoordinateRegion(center: userCoordinate, span: span)
-            self.mapView.setRegion(region, animated: true)
+            strongSelf.mapView.setRegion(region, animated: true)
         }
         
-        viewModel.visibleLocationViewModels.observeNext { observableArrayEvent in
+        _viewModel.visibleLocationViewModels.observeNext { [weak self] observableArrayEvent in
+            // Make self strong
+            guard let self = self else {
+                return
+            }
             
             switch observableArrayEvent.change
             {
@@ -125,13 +141,16 @@ class HomeViewController: UIViewController
                 
             case .move(let fromIndex, let toIndex):
                 print("move")
+//                let tempAnnotation = self.annotations[fromIndex]
+//                self.annotations[fromIndex] = self.annotations[toIndex]
+//                self.annotations[toIndex] = tempAnnotation
                 swap(&self.annotations[fromIndex], &self.annotations[toIndex])
+                
             default:
                 // case .beginBatchEditing:
                 // case .endBatchEditing:
                 break
             }
-            
         }.dispose(in: bag)
     }
     
@@ -175,7 +194,7 @@ extension HomeViewController
     @IBAction func longTapOnMap(_ sender: UILongPressGestureRecognizer)
     {
         // Protection from multiple taps
-        if sender.isEnabled == false
+        if !sender.isEnabled
         {
             return
         }
@@ -321,7 +340,7 @@ extension HomeViewController: MKMapViewDelegate
             
             selectedLocationViewModel.updatedCoordinate = annotation.coordinate
             let _ = selectedLocationViewModel.saveUpdates()
-            break
+       
         default:
             // Do nothing
             break
@@ -331,14 +350,8 @@ extension HomeViewController: MKMapViewDelegate
     func visibleAnnotationFor(_ locationViewModel: LocationViewModel) -> MKAnnotation?
     {
         let visibleAnnotations = mapView.visibleAnnotations()
-        for annotation in visibleAnnotations
-        {
-            if annotation.isForLocationViewModel(locationViewModel)
-            {
-                return annotation
-            }
-        }
+        let annotation = visibleAnnotations.first{ $0.isForLocationViewModel(locationViewModel) }
         
-        return nil
+        return annotation
     }
 }

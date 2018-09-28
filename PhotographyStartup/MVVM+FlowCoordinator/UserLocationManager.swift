@@ -15,17 +15,17 @@ class UserLocationManager: NSObject
     var tracking = Observable<Bool>(false)
     var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
     
-    private lazy var clLocationManager = CLLocationManager()
-    
+    private lazy var clLocationManager: CLLocationManager = { [unowned self] in
+        let clLocationManager = CLLocationManager()
+        clLocationManager.delegate = self
+        clLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+
+        return clLocationManager
+    }()
+
     func startTarckingUserLoaction()
     {
         clLocationManager.requestWhenInUseAuthorization()
-        if CLLocationManager.locationServicesEnabled()
-        {
-            clLocationManager.delegate = self
-            clLocationManager.desiredAccuracy = kCLLocationAccuracyBest
-            clLocationManager.startUpdatingLocation()
-        }
     }
     
     func stopTarckingUserLoaction()
@@ -36,6 +36,27 @@ class UserLocationManager: NSObject
 
 extension UserLocationManager : CLLocationManagerDelegate
 {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus)
+    {
+        switch status
+        {
+        case .notDetermined:
+            clLocationManager.stopUpdatingLocation()
+            
+        case .denied:
+            clLocationManager.stopUpdatingLocation()
+            
+        case .authorizedAlways:
+            clLocationManager.startUpdatingLocation()
+            
+        case .authorizedWhenInUse:
+            clLocationManager.startUpdatingLocation()
+            
+        case .restricted:
+            clLocationManager.stopUpdatingLocation()
+        }
+    }
+    
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion)
     {
         tracking.value = true
@@ -43,16 +64,12 @@ extension UserLocationManager : CLLocationManagerDelegate
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
-        guard locations.count > 0 else {
-            return
-        }
-        
         guard let latestLocation = locations.last else {
             print("Error: could not get latest location")
             return
         }
         
-        self.userCoordinate.value = latestLocation.coordinate
+        userCoordinate.value = latestLocation.coordinate
     }
     
     func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?)

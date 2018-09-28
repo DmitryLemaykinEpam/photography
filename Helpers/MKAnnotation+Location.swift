@@ -13,8 +13,8 @@ extension MKAnnotation
 {
     func isForLocationViewModel(_ locationViewModel: LocationViewModel) -> Bool
     {
-        if self.title == locationViewModel.name &&
-           self.coordinate == locationViewModel.coordinate
+        if title == locationViewModel.name &&
+           coordinate == locationViewModel.coordinate
         {
             return true
         }

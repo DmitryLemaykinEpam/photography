@@ -13,6 +13,6 @@ extension MKMapView
 {
     func visibleAnnotations() -> [MKAnnotation]
     {
-        return self.annotations(in: self.visibleMapRect).map { obj -> MKAnnotation in return obj as! MKAnnotation }
+        return annotations(in: visibleMapRect).map { obj -> MKAnnotation in return obj as! MKAnnotation }
     }
 }

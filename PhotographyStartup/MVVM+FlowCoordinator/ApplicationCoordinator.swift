@@ -21,7 +21,7 @@ class ApplicationCoordinator: NSObject, Coordinator
     init(window: UIWindow)
     {
         self.window = window
-        self.rootViewController = UINavigationController()
+        rootViewController = UINavigationController()
         
         super.init()
         

@@ -39,7 +39,7 @@ class HomeCoordinator: Coordinator
     
     func showHomeViewController()
     {
-        let homeViewModel = HomeViewModel(locationsManager: self.locationsManager, userLocationManager: self.userLocationManager)
+        let homeViewModel = HomeViewModel(locationsManager: locationsManager, userLocationManager: userLocationManager)
         
         let homeViewController = HomeViewController.storyboardViewController()
         homeViewController.viewModel = homeViewModel

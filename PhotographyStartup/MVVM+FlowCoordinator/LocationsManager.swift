@@ -31,7 +31,7 @@ class LocationsManager : NSObject
         
         if UserDefaults.firstLaunch()
         {
-            self.loadDefaultLocatios()
+            loadDefaultLocatios()
         }
     }
     
@@ -68,8 +68,8 @@ class LocationsManager : NSObject
                 newLocation.lon = defaultLocation.lng
             }
             
-            NSManagedObjectContext.mr_default().mr_saveToPersistentStore { (success, error) in
-                if success == false
+            NSManagedObjectContext.mr_default().mr_saveToPersistentStore { (contextDidSave, error) in
+                if contextDidSave == false
                 {
                     print("Error: \(error.debugDescription)")
                 }
@@ -128,9 +128,9 @@ class LocationsManager : NSObject
             print("Error: \(error)")
         }
         
-        print("Fetched count:\(String(describing: self.visibleLocationsFetchedResultsController.fetchedObjects?.count))")
+        print("Fetched count:\(String(describing: visibleLocationsFetchedResultsController.fetchedObjects?.count))")
         
-        self.delegate?.locationsReloaded()
+        delegate?.locationsReloaded()
     }
     
     func removeLocation(_ location: Location)
@@ -186,13 +186,13 @@ extension LocationsManager: NSFetchedResultsControllerDelegate
         switch type
         {
         case .insert:
-            self.delegate?.locationAdded(location)
+            delegate?.locationAdded(location)
             
         case .delete:
-            self.delegate?.locationRemoved(location)
+            delegate?.locationRemoved(location)
             
         case .update:
-            self.delegate?.locationUpdated(location, indexPath: newIndexPath)
+            delegate?.locationUpdated(location, indexPath: newIndexPath)
             
         case .move:
             // Do nothing
@@ -221,13 +221,14 @@ extension LocationsManager
         let minLon = min(neCoordinate.longitude, swCoordinate.longitude)
         let maxLon = max(swCoordinate.longitude, neCoordinate.longitude)
         
-        let minLatFormatted = String(format: "%.16f", minLat)
-        let maxLatFormatted = String(format: "%.16f", maxLat)
+        let minLatNSNumber = NSNumber(value:minLat)
+        let maxLatNSNumber = NSNumber(value:maxLat)
         
-        let minLonFormatted = String(format: "%.16f", minLon)
-        let maxLonFormatted = String(format: "%.16f", maxLon)
+        let minLonNSNumber = NSNumber(value:minLon)
+        let maxLonNSNumber = NSNumber(value:maxLon)
         
-        let predicate = NSPredicate(format: "\(minLatFormatted) <= lat AND lat <= \(maxLatFormatted) AND \(minLonFormatted) <= lon AND lon <= \(maxLonFormatted)")
+        let predicate = NSPredicate(format: "\(minLatNSNumber) <= lat AND lat <= \(maxLatNSNumber) AND \(minLonNSNumber) <= lon AND lon <= \(maxLonNSNumber)")
+        print("predicateN: \(predicate)")
         
         visibleLocationsFetchedResultsController.fetchRequest.predicate = predicate
         fetch()
