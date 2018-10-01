@@ -93,7 +93,7 @@ extension HomeCoordinator: AllLocationsCoordinatorDelegate
 // MARK: - AllLocationsCoordinatorDelegate
 extension HomeCoordinator: LocationDetailsCoordinatorDelegate
 {
-    func locationDetailsCoordinatorCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
+    func locationDetailsCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
     {
         locationDetailsCoordinator = nil
     }

@@ -73,7 +73,7 @@ class LocationsManager : NSObject
             }
             
             context.mr_saveToPersistentStore { (contextDidSave, error) in
-                if contextDidSave == false
+                if !contextDidSave
                 {
                     print("Error: \(error.debugDescription)")
                 }
@@ -136,7 +136,7 @@ class LocationsManager : NSObject
     func removeLocation(_ location: Location)
     {
         let deletionResult = location.mr_deleteEntity()
-        if deletionResult == false {
+        if !deletionResult {
             print("Error: Could not delete selected location")
             return
         }

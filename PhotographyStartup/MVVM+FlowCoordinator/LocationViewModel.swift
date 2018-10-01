@@ -12,7 +12,7 @@ import Bond
 
 class LocationViewModel: LocationDetailsViewModelProtocol
 {
-    var locationsManager: LocationsManager!
+    private let locationsManager: LocationsManager
     
     let locationId: String
     var coordinate: CLLocationCoordinate2D
@@ -22,7 +22,7 @@ class LocationViewModel: LocationDetailsViewModelProtocol
     
     var removed = Observable<Bool>(false)
 
-    init(locationsManager: LocationsManager!, location: Location)
+    init(locationsManager: LocationsManager, location: Location)
     {
         self.locationId = location.locationId()
         self.locationsManager = locationsManager

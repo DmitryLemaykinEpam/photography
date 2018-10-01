@@ -10,7 +10,7 @@ import UIKit
 
 protocol LocationDetailsCoordinatorDelegate: class
 {
-    func locationDetailsCoordinatorCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
+    func locationDetailsCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
 }
 
 class LocationDetailsCoordinator: Coordinator
@@ -48,6 +48,6 @@ extension LocationDetailsCoordinator: LocationDetailsViewControllerDelegate
 {
     func locationDetailsViewControllerDidBackAction()
     {
-        self.delegate?.locationDetailsCoordinatorCoordinatorDidSelectBackAction(self)
+        self.delegate?.locationDetailsCoordinatorDidSelectBackAction(self)
     }
 }

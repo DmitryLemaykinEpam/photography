@@ -71,7 +71,7 @@ extension AllLocationsCoordinator: AllLocationsViewControllerDelegate
 
 extension AllLocationsCoordinator: LocationDetailsCoordinatorDelegate
 {
-    func locationDetailsCoordinatorCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
+    func locationDetailsCoordinatorDidSelectBackAction(_ coordinator: LocationDetailsCoordinator)
     {
         locationDetailsCoordinator = nil
     }
