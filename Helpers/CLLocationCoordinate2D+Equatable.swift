@@ -6,7 +6,6 @@
 //  Copyright © 2018 Dmitry Lemaykin. All rights reserved.
 //
 
-import Foundation
 import MapKit
 
 extension CLLocationCoordinate2D: Equatable

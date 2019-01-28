@@ -8,13 +8,8 @@
 
 import UIKit
 
-protocol LocationDetailsViewModelProtocol
-{
-    var name: String?{get set}
-    var notes: String?{get set}
-    
-    func save()
-}
+import RxSwift
+
 
 protocol LocationDetailsViewControllerDelegate: class
 {
@@ -23,10 +18,12 @@ protocol LocationDetailsViewControllerDelegate: class
 
 class LocationDetailsViewController: UITableViewController
 {
+    private var disposeBag = DisposeBag()
+    
     weak var delegate: LocationDetailsViewControllerDelegate?
     
-    private var _viewModel: LocationDetailsViewModelProtocol!
-    var viewModel: LocationDetailsViewModelProtocol!
+    private var _viewModel: PlaceViewModel!
+    var viewModel: PlaceViewModel!
     {
         get {
             return _viewModel
@@ -46,7 +43,9 @@ class LocationDetailsViewController: UITableViewController
         let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: .save)
         navigationItem.rightBarButtonItem = saveBarButtonItem
         
-        nameTextField.text = viewModel.name
+        viewModel.name.asObservable()
+            .bind(to: nameTextField.rx.text)
+            .disposed(by: disposeBag)
         descriptionTextView.text = viewModel.notes
     }
     
@@ -69,7 +68,7 @@ class LocationDetailsViewController: UITableViewController
 
     @objc func save()
     {
-        viewModel.name = nameTextField.text
+        viewModel.name.value = nameTextField.text ?? ""
         viewModel.notes = descriptionTextView.text
         
         viewModel.save()

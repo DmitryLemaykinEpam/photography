@@ -8,31 +8,86 @@
 
 import Foundation
 import MapKit
-import Bond
+
+import RxSwift
+import RxCocoa
 
 class HomeViewModel
 {
-    var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
-    var visibleLocationViewModels = MutableObservableArray<LocationViewModel>([])
+    // MARK: - Init
+    private var disposeBag = DisposeBag()
     
-    private let locationsManager: LocationsManager
+    private let visiblePlacesManager: VisiblePlacesManager
+    private let placesManager: PlacesManager
     private let userLocationManager: UserLocationManager
     
-    init(locationsManager: LocationsManager, userLocationManager: UserLocationManager)
+    init(visiblePlacesManager: VisiblePlacesManager, placesManager: PlacesManager, userLocationManager: UserLocationManager)
     {
-        self.locationsManager = locationsManager
+        self.placesManager = placesManager
+        
         self.userLocationManager = userLocationManager
+        self.userLocationManager.userCoordinate.bind(to: self._userCoordinate).disposed(by: disposeBag)
         
-        self.locationsManager.delegate = self
+        self.visiblePlacesManager = visiblePlacesManager
+        self.visiblePlacesManager.visibleLocationsChanges.subscribe(onNext: { [weak self] change in
+            guard let self = self else {
+                return
+            }
+            
+            let placeVM = PlaceViewModel(placesManager: self.placesManager)
+            placeVM.place = change.anObject
+            
+            let changeVM = Change(anObject: placeVM, action: change.action)
+            self._visiblePlacesViewModelsChanges.onNext(changeVM)
+        })
+            .disposed(by: self.disposeBag)
         
-        // Path trough of bindings
-        self.userCoordinate = self.userLocationManager.userCoordinate
+        self.visiblePlacesManager.visiblePlacesCount.asObservable().bind(to: self.visiblePlacesCount).disposed(by: disposeBag)
+    }
+    
+    // MARK: - Input
+    
+    // MARK: - Output
+    private let _userCoordinate = Variable<CLLocationCoordinate2D?>(nil)
+    public var userCoordinate: Observable<CLLocationCoordinate2D?> {
+        return _userCoordinate.asObservable()
+    }
+    
+    public let visiblePlacesCount = Variable<Int?>(nil)
+    public func visiblePlace(index: Int) -> PlaceViewModel?
+    {
+        guard let place = visiblePlacesManager.visiblePlace(index: index) else {
+            return nil
+        }
+        
+        let placeVM = PlaceViewModel(placesManager: placesManager)
+        placeVM.place = place
+        
+        return placeVM
+    }
+    
+    private let _visiblePlacesViewModelsChanges = PublishSubject<Change<PlaceViewModel>>()
+    public var visiblePlacesViewModelsChanges: Observable<Change<PlaceViewModel>> {
+        return _visiblePlacesViewModelsChanges.asObservable()
     }
 }
 
-// MARK - HomeViewModelProtocol
+// MARK: - HomeViewModelProtocol
 extension HomeViewModel: HomeViewModelProtocol
 {
+    func placeViewModelFor(placeId: String?) -> PlaceViewModel?
+    {
+        guard let placeId = placeId,
+            let place = visiblePlacesManager.visiblePlace(placeId) else {
+            return nil
+        }
+        
+        let placeViewModel = PlaceViewModel(placesManager: self.placesManager)
+        placeViewModel.place = place
+        
+        return placeViewModel
+    }
+    
     func startTarckingUserLoaction()
     {
         userLocationManager.startTarckingUserLoaction()
@@ -43,129 +98,32 @@ extension HomeViewModel: HomeViewModelProtocol
         userLocationManager.stopTarckingUserLoaction()
     }
     
-    func locationViewModelFor(name: String??, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
-    {
-        let locationViewModel = visibleLocationViewModels.array.first{ $0.coordinate == coordinate && $0.name == name }
-        return locationViewModel
-    }
-    
     func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
     {
-        locationsManager.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
+        visiblePlacesManager.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
-    func createLocationViewModel() -> LocationViewModel?
+    func createLocationViewModel() -> PlaceViewModel?
     {
-        guard let newLocation = locationsManager.createLocation() else {
+        guard let place = placesManager.createPlace() else {
             print("Error: could not create location for view model")
             return nil
         }
         
-        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: newLocation)
-        return locationViewModel
+        let placeViewModel = PlaceViewModel(placesManager: placesManager)
+        placeViewModel.place = place
+        
+        return placeViewModel
     }
     
-    func removeLocation(_ locationViewModel: LocationViewModel)
+    func removeLocation(_ locationViewModel: PlaceViewModel)
     {
-        guard let location = locationsManager.locationFor(locationId: locationViewModel.locationId ) else {
+        guard let place = placesManager.placeFor(placeId: locationViewModel.placeId) else {
             print("Error: could not get Locations for LocationsViewModel")
             return
         }
         
-        locationsManager.removeLocation(location)
-        locationsManager.saveToPersistentStore()
-    }
-}
-
-// MARK - LocationsManagerDelegate
-extension HomeViewModel: LocationsManagerDelegate
-{
-    func locationAdded(_ location: Location)
-    {
-        let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
-        visibleLocationViewModels.append(locationViewModel)
-    }
-    
-    func locationRemoved(_ location: Location)
-    {
-        let locationId = location.locationId()
-        
-        guard let locationViewModelToRemove = visibleLocationViewModels.array.first(where: { $0.locationId == locationId }),
-              let indexToRemove = visibleLocationViewModels.array.index(of: locationViewModelToRemove)
-        else {
-            print("Error: could not get locationViewModelToRemove for location: \(location)")
-            return
-        }
-        
-        locationViewModelToRemove.removed.value = true
-        visibleLocationViewModels.remove(at: indexToRemove)
-    }
-    
-    func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
-    {
-        guard let indexPath = indexPath else {
-            print("Error: no index psth for update")
-            return
-        }
-        
-        let index = indexPath.row
-        let updatedLocationViewModel = visibleLocationViewModels.array[index]
-        updatedLocationViewModel.name = updatedLocation.name
-        updatedLocationViewModel.notes = updatedLocation.notes
-        updatedLocationViewModel.coordinate = CLLocationCoordinate2D(latitude: updatedLocation.lat
-            , longitude: updatedLocation.lon)
-        
-        visibleLocationViewModels.batchUpdate { (array) in
-            array[index] = updatedLocationViewModel
-        }
-    }
-    
-    func locationsReloaded()
-    {
-        guard let visibleLocations = locationsManager.visibleLocations() else {
-            return
-        }
-
-        // View models added by portions, not one after another
-        var locationViewModelsToShow = [LocationViewModel]()
-        for location in visibleLocations
-        {
-            let locationViewModel = LocationViewModel(locationsManager: locationsManager, location: location)
-            locationViewModelsToShow.append(locationViewModel)
-        }
-        
-        // Working not as expected
-        //visibleLocationViewModels2.replace(with: locationViewModelsToShow, performDiff: true)
-        
-        var locationViewModelsToRemove = [LocationViewModel]()
-        for locationViewModel in visibleLocationViewModels.array
-        {
-            if !locationViewModelsToShow.contains(locationViewModel)
-            {
-                locationViewModelsToRemove.append(locationViewModel)
-            }
-        }
-        
-        var locationViewModelsToAdd = [LocationViewModel]()
-        for locationViewModel in locationViewModelsToShow
-        {
-            if !visibleLocationViewModels.array.contains(locationViewModel)
-            {
-                locationViewModelsToAdd.append(locationViewModel)
-            }
-        }
-
-        for locationViewModelToRemove in locationViewModelsToRemove
-        {
-            if let index = visibleLocationViewModels.array.index(of: locationViewModelToRemove)
-            {
-                visibleLocationViewModels.remove(at: index)
-            }
-        }
-        
-        if locationViewModelsToAdd.count > 0
-        {
-            visibleLocationViewModels.insert(contentsOf: locationViewModelsToAdd, at: 0)
-        }
+        placesManager.removePlace(place)
+        placesManager.saveContext()
     }
 }

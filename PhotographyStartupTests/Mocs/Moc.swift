@@ -9,34 +9,34 @@
 import XCTest
 @testable import PhotographyStartup
 
-class LocationsManagerDelegate_Moc : LocationsManagerDelegate
+class PlacesManagerDelegate_Moc : PlacesManagerDelegate
 {
-    var location : Location?
+    var place : Place?
     
-    var didCall_locationAdded = false
-    var didCall_locationRemoved = false
-    var didCall_locationsReloaded = false
-    var didCall_locationUpdated = false
+    var didCall_placeAdded = false
+    var didCall_placeRemoved = false
+    var didCall_placeReloaded = false
+    var didCall_placeUpdated = false
     
-    func locationAdded(_ location: Location)
+    func placeAdded(_ newPlace: Place)
     {
-        didCall_locationAdded = true
-        self.location = location
+        self.didCall_placeAdded = true
+        self.place = newPlace
     }
     
-    func locationUpdated(_ updatedLocation: Location, indexPath: IndexPath?)
+    func placeUpdated(_ updatedPlace: Place, indexPath: IndexPath?)
     {
-        didCall_locationUpdated = true
-        self.location = updatedLocation
+        self.didCall_placeUpdated = true
+        self.place = updatedPlace
     }
     
-    func locationRemoved(_ location: Location)
+    func placeRemoved(_ placeToRemove: Place)
     {
-        didCall_locationRemoved = true
-        self.location = location
+        self.didCall_placeRemoved = true
+        self.place = placeToRemove
     }
     
-    func locationsReloaded() {
-        didCall_locationsReloaded = true
+    func placesReloaded() {
+        self.didCall_placeReloaded = true
     }
 }

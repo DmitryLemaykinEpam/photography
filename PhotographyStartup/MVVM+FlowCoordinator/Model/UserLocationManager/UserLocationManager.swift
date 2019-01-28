@@ -8,23 +8,38 @@
 
 import Foundation
 import CoreLocation
-import Bond
+import RxSwift
 
 class UserLocationManager: NSObject
 {
-    var tracking = Observable<Bool>(false)
-    var userCoordinate = Observable<CLLocationCoordinate2D?>(nil)
-    
-    private lazy var clLocationManager: CLLocationManager = { [unowned self] in
+    // MARK: - Init
+    fileprivate lazy var clLocationManager: CLLocationManager = { [unowned self] in
         let clLocationManager = CLLocationManager()
         clLocationManager.delegate = self
         clLocationManager.desiredAccuracy = kCLLocationAccuracyBest
 
         return clLocationManager
     }()
-
+    
+    // MARK: - Input
+    
+    
+    // MARK: - Output
+    
+    fileprivate var _isTracking = Variable<Bool>(false)
+    public var isTracking: Observable<Bool> {
+        return _isTracking.asObservable().distinctUntilChanged()
+    }
+    
+    public var userCoordinate = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
+    
+    // MARK: - Methods
     func startTarckingUserLoaction()
     {
+        if _isTracking.value == true {
+            return
+        }
+        
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
             CLLocationManager.authorizationStatus() == .authorizedAlways {
             clLocationManager.startUpdatingLocation()
@@ -39,17 +54,17 @@ class UserLocationManager: NSObject
     }
 }
 
-extension UserLocationManager : CLLocationManagerDelegate
+extension UserLocationManager: CLLocationManagerDelegate
 {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus)
     {
         switch status
         {
         case .notDetermined:
-            tracking.value = false
+            _isTracking.value = false
             
         case .denied:
-            tracking.value = false
+            _isTracking.value = false
             
         case .authorizedAlways:
             clLocationManager.startUpdatingLocation()
@@ -57,35 +72,35 @@ extension UserLocationManager : CLLocationManagerDelegate
         case .authorizedWhenInUse:
             clLocationManager.startUpdatingLocation()
             
-        default:
-            // Do nothing
-            break
+        case .restricted:
+            _isTracking.value = false
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion)
     {
-        tracking.value = true
+        _isTracking.value = true
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     {
         guard let latestLocation = locations.last else {
-            print("Error: could not get latest location")
+            print("ERROR: could not get latest location")
             return
         }
         
-        userCoordinate.value = latestLocation.coordinate
+        print("UserLocationManager: latestLocation.coordinate: \(latestLocation.coordinate)")
+        userCoordinate.onNext(latestLocation.coordinate)
     }
     
     func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?)
     {
-        tracking.value = false
+        _isTracking.value = false
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
     {
-        print("Error: " + error.localizedDescription)
-        tracking.value = false
+        print("ERROR: " + error.localizedDescription)
+        _isTracking.value = false
     }
 }

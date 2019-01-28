@@ -18,15 +18,15 @@ class LocationDetailsCoordinator: Coordinator
     weak var delegate: LocationDetailsCoordinatorDelegate?
     
     private let presenter: UINavigationController
-    fileprivate let locationsManager: LocationsManager
+    fileprivate let placesManager: PlacesManager
     
-    private var locationViewModel: LocationViewModel
+    private var placeId: String
     
-    init(presenter: UINavigationController, locationsManager: LocationsManager, selectedLocationViewModel: LocationViewModel)
+    init(presenter: UINavigationController, placesManager: PlacesManager, placeId: String)
     {
         self.presenter = presenter
-        self.locationsManager = locationsManager
-        self.locationViewModel = selectedLocationViewModel
+        self.placesManager = placesManager
+        self.placeId = placeId
     }
     
     func start()
@@ -38,7 +38,12 @@ class LocationDetailsCoordinator: Coordinator
     {
         let locationDetailsViewController = LocationDetailsViewController.storyboardViewController()
         locationDetailsViewController.delegate = self
-        locationDetailsViewController.viewModel = self.locationViewModel
+        
+        let place = self.placesManager.placeFor(placeId: self.placeId)
+        let placeVM = PlaceViewModel(placesManager: self.placesManager)
+        placeVM.place = place
+        
+        locationDetailsViewController.viewModel = placeVM
         
         presenter.pushViewController(locationDetailsViewController, animated: true)
     }

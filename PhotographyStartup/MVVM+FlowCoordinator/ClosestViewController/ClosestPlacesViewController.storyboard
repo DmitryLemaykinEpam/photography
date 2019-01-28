@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="rra-fb-pgA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="rra-fb-pgA">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,7 +13,7 @@
         <!--All Locations-->
         <scene sceneID="0nm-pG-SWf">
             <objects>
-                <viewController title="All Locations" id="rra-fb-pgA" customClass="AllLocationsViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="All Locations" id="rra-fb-pgA" customClass="ClosestPlacesViewController" customModule="PhotographyStartup" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rai-kQ-L0U">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LocationCellReuseId" rowHeight="68" id="R26-5o-VRO" customClass="LocationTableViewCell" customModule="PhotographyStartup" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LocationCellReuseId" rowHeight="68" id="R26-5o-VRO" customClass="ClosestPlaceTableViewCell" customModule="PhotographyStartup" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="68"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R26-5o-VRO" id="ALf-hP-E8R">
@@ -30,7 +30,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="km" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8R7-EX-sjX">
-                                                    <rect key="frame" x="286.5" y="21" width="23.5" height="26"/>
+                                                    <rect key="frame" x="326.5" y="21" width="23.5" height="26"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dAV-sJ-ks5" userLabel="Name Label">
+                                                    <rect key="frame" x="10" y="23.5" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -38,6 +44,8 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottomMargin" secondItem="8R7-EX-sjX" secondAttribute="bottom" constant="10" id="DTf-Va-hhg"/>
+                                                <constraint firstItem="dAV-sJ-ks5" firstAttribute="centerY" secondItem="ALf-hP-E8R" secondAttribute="centerY" id="EyP-8A-Iaf"/>
+                                                <constraint firstItem="dAV-sJ-ks5" firstAttribute="leading" secondItem="ALf-hP-E8R" secondAttribute="leading" constant="10" id="Jo8-5E-5VS"/>
                                                 <constraint firstItem="8R7-EX-sjX" firstAttribute="top" secondItem="ALf-hP-E8R" secondAttribute="topMargin" constant="10" id="QuD-fy-xV5"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="8R7-EX-sjX" secondAttribute="trailing" constant="10" id="haG-1O-Uo6"/>
                                                 <constraint firstItem="8R7-EX-sjX" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ALf-hP-E8R" secondAttribute="leadingMargin" id="yQT-t5-ZNt"/>
@@ -45,6 +53,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="distanceLabel" destination="8R7-EX-sjX" id="3bd-8H-uoy"/>
+                                            <outlet property="nameLabel" destination="dAV-sJ-ks5" id="cgK-Ap-jbt"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -53,10 +62,24 @@
                                     <outlet property="delegate" destination="rra-fb-pgA" id="PWl-Lj-8O4"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l6w-DC-eBp">
+                                <rect key="frame" x="20" y="617" width="177" height="30"/>
+                                <color key="backgroundColor" red="0.1098753668" green="1" blue="0.54354156590000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="MTP-3w-uY8"/>
+                                    <constraint firstAttribute="width" constant="177" id="epG-f6-vcE"/>
+                                </constraints>
+                                <state key="normal" title="Create Places 1000X1000"/>
+                                <connections>
+                                    <action selector="createPlaces:" destination="rra-fb-pgA" eventType="touchUpInside" id="HZd-P3-dqB"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="DGj-jB-0q7" firstAttribute="bottom" secondItem="l6w-DC-eBp" secondAttribute="bottom" constant="20" id="Clc-U0-qXu"/>
                             <constraint firstItem="lZW-Q9-hlc" firstAttribute="top" secondItem="DGj-jB-0q7" secondAttribute="top" id="Jxc-rm-HQl"/>
+                            <constraint firstItem="l6w-DC-eBp" firstAttribute="leading" secondItem="DGj-jB-0q7" secondAttribute="leading" constant="20" id="Y6g-Y9-mVs"/>
                             <constraint firstItem="lZW-Q9-hlc" firstAttribute="leading" secondItem="DGj-jB-0q7" secondAttribute="leading" id="dwx-S7-ndS"/>
                             <constraint firstAttribute="bottom" secondItem="lZW-Q9-hlc" secondAttribute="bottom" id="rdq-ct-ik2"/>
                             <constraint firstItem="DGj-jB-0q7" firstAttribute="trailing" secondItem="lZW-Q9-hlc" secondAttribute="trailing" id="vgH-mh-e3N"/>

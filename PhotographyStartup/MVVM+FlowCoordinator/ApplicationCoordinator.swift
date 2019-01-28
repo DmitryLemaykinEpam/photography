@@ -15,19 +15,24 @@ class ApplicationCoordinator: NSObject, Coordinator
     
     fileprivate var homeCoordinator: HomeCoordinator?
     
-    fileprivate var locationsManager = LocationsManager()
+    fileprivate var placesManager = PlacesManager(context: coreDataStack.mainContext)
     fileprivate let userLocationManager = UserLocationManager()
+    fileprivate let visiblePlacesManager = VisiblePlacesManager(context: coreDataStack.mainContext)
+    
+    fileprivate let userLocationSimulator: UserLocationSimulator!
     
     init(window: UIWindow)
     {
         self.window = window
         rootViewController = UINavigationController()
+
+        userLocationSimulator = UserLocationSimulator(userLocationManager: userLocationManager)
+        //userLocationSimulator.simulate(GPSFileName: "SydneyRun")
         
         super.init()
         
         rootViewController.delegate = self
-        //rootViewController.navigationBar.isHidden = true
-        
+
         window.rootViewController = rootViewController
         window.makeKeyAndVisible()
     }
@@ -39,7 +44,7 @@ class ApplicationCoordinator: NSObject, Coordinator
     
     func showHomeViewController()
     {
-        let homeCoordinator = HomeCoordinator(presenter: rootViewController, userLocationManager: userLocationManager, locationsManager: locationsManager)
+        let homeCoordinator = HomeCoordinator(presenter: rootViewController, userLocationManager: userLocationManager, visiblePlacesManager: visiblePlacesManager, placesManager: placesManager)
         homeCoordinator.delegate = self
         homeCoordinator.start()
         

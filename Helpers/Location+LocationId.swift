@@ -6,12 +6,11 @@
 //  Copyright © 2018 Dmitry Lemaykin. All rights reserved.
 //
 
-import Foundation
 import CoreData
 
-extension Location
+extension Place
 {
-    func locationId() -> String
+    func placeId() -> String
     {
         return objectID.uriRepresentation().absoluteString
     }

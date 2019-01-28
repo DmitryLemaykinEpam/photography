@@ -15,20 +15,22 @@ protocol HomeCoordinatorDelegate: class
 
 class HomeCoordinator: Coordinator
 {
-    weak var delegate : HomeCoordinatorDelegate?
+    weak var delegate: HomeCoordinatorDelegate?
     
     private let presenter: UINavigationController
     
-    fileprivate let locationsManager: LocationsManager
+    fileprivate let placesManager: PlacesManager
+    fileprivate let visiblePlacesManager: VisiblePlacesManager
     fileprivate let userLocationManager: UserLocationManager
     
-    private var allLocationsCoordinator: AllLocationsCoordinator?
+    private var allLocationsCoordinator: ClosestPlacesCoordinator?
     private var locationDetailsCoordinator: LocationDetailsCoordinator?
     
-    init(presenter: UINavigationController, userLocationManager: UserLocationManager, locationsManager: LocationsManager)
+    init(presenter: UINavigationController, userLocationManager: UserLocationManager, visiblePlacesManager: VisiblePlacesManager, placesManager: PlacesManager)
     {
         self.presenter = presenter
-        self.locationsManager = locationsManager
+        self.placesManager = placesManager
+        self.visiblePlacesManager = visiblePlacesManager
         self.userLocationManager = userLocationManager
     }
     
@@ -39,7 +41,7 @@ class HomeCoordinator: Coordinator
     
     func showHomeViewController()
     {
-        let homeViewModel = HomeViewModel(locationsManager: locationsManager, userLocationManager: userLocationManager)
+        let homeViewModel = HomeViewModel(visiblePlacesManager: visiblePlacesManager, placesManager: placesManager, userLocationManager: userLocationManager)
         
         let homeViewController = HomeViewController.storyboardViewController()
         homeViewController.viewModel = homeViewModel
@@ -50,16 +52,16 @@ class HomeCoordinator: Coordinator
     
     func showAllLocationsViewController()
     {
-        let allLocationsCoordinator = AllLocationsCoordinator(presenter: presenter, locationsManager: locationsManager, userLocationManager: userLocationManager)
+        let allLocationsCoordinator = ClosestPlacesCoordinator(presenter: presenter, placesManager: placesManager, userLocationManager: userLocationManager)
         allLocationsCoordinator.delegate = self
         allLocationsCoordinator.start()
         
         self.allLocationsCoordinator = allLocationsCoordinator
     }
     
-    func showLocationDetailesViewController(_ locationViewModel: LocationViewModel)
+    func showLocationDetailesViewController(_ placeId: String)
     {
-        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter, locationsManager: locationsManager, selectedLocationViewModel: locationViewModel)
+        let locationDetailsCoordinator = LocationDetailsCoordinator(presenter: presenter, placesManager: placesManager, placeId: placeId)
         locationDetailsCoordinator.delegate = self
         locationDetailsCoordinator.start()
     
@@ -75,16 +77,16 @@ extension HomeCoordinator: HomeViewControllerDelegate
         showAllLocationsViewController()
     }
     
-    func homeViewControllerDidSelectEditLocation(_ locationViewModel: LocationViewModel)
+    func homeViewControllerDidSelectEditLocation(_ placeId: String)
     {
-        showLocationDetailesViewController(locationViewModel)
+        showLocationDetailesViewController(placeId)
     }
 }
 
 // MARK: - AllLocationsCoordinatorDelegate
 extension HomeCoordinator: AllLocationsCoordinatorDelegate
 {
-    func allLocationsCoordinatorDidSelectBackAction(_ coordinator: AllLocationsCoordinator)
+    func allLocationsCoordinatorDidSelectBackAction(_ coordinator: ClosestPlacesCoordinator)
     {
         allLocationsCoordinator = nil
     }

@@ -6,8 +6,6 @@
 //  Copyright © 2018 Dmitry Lemaykin. All rights reserved.
 //
 
-import Foundation
-
 extension Array where Element: Equatable
 {
     mutating func remove(_ obj: Element)
@@ -15,3 +13,4 @@ extension Array where Element: Equatable
         self = filter { $0 != obj }
     }
 }
+

@@ -1,2 +1,2 @@
 github "MagicalPanda/MagicalRecord"
-github "DeclarativeHub/Bond"
+github "ReactiveX/RxSwift" ~> 4.0

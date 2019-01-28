@@ -8,153 +8,165 @@
 
 import UIKit
 import MapKit
-import Bond
+
+import RxSwift
+import RxCocoa
 
 protocol HomeViewModelProtocol
 {
     var userCoordinate: Observable<CLLocationCoordinate2D?> {get}
-    var visibleLocationViewModels: MutableObservableArray<LocationViewModel> {get}
+    var visiblePlacesViewModelsChanges: Observable<Change<PlaceViewModel>>{get}
+    var visiblePlacesCount: Variable<Int?> {get}
+    func visiblePlace(index: Int) -> PlaceViewModel?
     
     func startTarckingUserLoaction()
     func stopTarckingUserLoaction()
     
-    func createLocationViewModel() -> LocationViewModel?
+    func createLocationViewModel() -> PlaceViewModel?
     func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
-    func locationViewModelFor(name: String??, coordinate: CLLocationCoordinate2D) -> LocationViewModel?
-    func removeLocation(_ locationViewModel: LocationViewModel)
+    func placeViewModelFor(placeId: String?) -> PlaceViewModel?
+    func removeLocation(_ locationViewModel: PlaceViewModel)
 }
 
 protocol HomeViewControllerDelegate: class
 {
     func homeViewControllerDidSelectShowAllLocations(_ homeViewController: HomeViewController)
-    func homeViewControllerDidSelectEditLocation(_ locationViewModel: LocationViewModel)
+    func homeViewControllerDidSelectEditLocation(_ placeId: String)
 }
 
 class HomeViewController: UIViewController
 {
-    private var _viewModel: HomeViewModelProtocol!
     var viewModel: HomeViewModelProtocol!
-    {
-        get {
-            return _viewModel
-        }
-        set {
-            _viewModel = newValue
-            bindViewModel()
-        }
-    }
 
     weak var delegate: HomeViewControllerDelegate?
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var mapLongTapGestureRecognizer: UILongPressGestureRecognizer!
     
-    var selectedLocationViewModel: LocationViewModel?
+    var selectedLocationViewModel: PlaceViewModel?
+    private var visiblePlacesViewModels: [PlaceViewModel]?
     
     // These annotations match Location ViewModels from viewModel
     private var annotations = [MKAnnotation]()
     
-    struct Constants {
-        static let CustomAnnotationReuseId = "customAnnotationReuseId"
-    }
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: Constants.CustomAnnotationReuseId)
+        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapView.ReuseId.CustomAnnotation)
     }
     
     func bindViewModel()
     {
-        _viewModel.userCoordinate.bind(to: self) { strongSelf, userCoordinate in
-            print("userCoordinate: ", String(describing: userCoordinate))
-            
-            guard let userCoordinate = userCoordinate else {
-                return
-            }
-            
-            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            let region = MKCoordinateRegion(center: userCoordinate, span: span)
-            strongSelf.mapView.setRegion(region, animated: true)
-        }
+        viewModel.userCoordinate
+            .subscribe(onNext: { userCoordinate in
+                guard let userCoordinate = userCoordinate,
+                      let mapView = self.mapView else {
+                    return
+                }
+                
+                let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                let region = MKCoordinateRegion(center: userCoordinate, span: span)
+                mapView.setRegion(region, animated: true)
+            })
+            .disposed(by: disposeBag)
         
-        _viewModel.visibleLocationViewModels.observeNext { [weak self] observableArrayEvent in
-            // Make self strong
+        viewModel.visiblePlacesCount.asObservable().subscribe(onNext: { [weak self] count in
             guard let self = self else {
                 return
             }
             
-            switch observableArrayEvent.change
-            {
-            case .reset:
-                print("reset")
-                self.annotations.removeAll()
-                
-            case .inserts(let indexes):
-                print("inserts: \(indexes)")
-                
-                // Avoiding indexe shifting in insert by going from lowest to higest index
-                var annotationsToAdd = [MKAnnotation]()
-                for indexOfIndex in 0..<indexes.count
-                {
-                    let index = indexes[indexOfIndex]
-                    
-                    let locationViewModel = observableArrayEvent.source.array[index]
-                    
-                    let annotation = MKPointAnnotation.createFor(locationViewModel)
-                    
-                    self.annotations.insert(annotation, at: index)
-                    annotationsToAdd.append(annotation)
-                }
-                self.mapView.addAnnotations(annotationsToAdd)
-                
-            case .deletes(let indexes):
-                print("deletes: \(indexes)")
-                // Avoiding indexe shifting in deletes by going from higest to lowest index
-                var annotationsToRemove = [MKAnnotation]()
-                for indexOfIndex in (0..<indexes.count).reversed()
-                {
-                    let index = indexes[indexOfIndex]
-                    
-                    let annotationToRemove = self.annotations.remove(at: index)
-                    annotationsToRemove.append(annotationToRemove)
-                }
-                self.mapView.removeAnnotations(annotationsToRemove)
-                
-            case .updates(let indexes):
-                print("updates: \(indexes)")
-                
-                var annotationsToRemove = [MKAnnotation]()
-                var annotationsToAdd = [MKAnnotation]()
-                indexes.forEach({ (index) in
-                    let locationViewModel = observableArrayEvent.source.array[index]
- 
-                    let annotationToRemove = self.annotations.remove(at: index)
-                    annotationsToRemove.append(annotationToRemove)
-                    
-                    let annotationToAdd = MKPointAnnotation.createFor(locationViewModel)
-                    annotationsToAdd.append(annotationToAdd)
-                    
-                    self.annotations.insert(annotationToAdd, at: index)
-                })
-                self.mapView.removeAnnotations(annotationsToRemove)
-                self.mapView.addAnnotations(annotationsToAdd)
-                
-            case .move(let fromIndex, let toIndex):
-                print("move")
-                // No need to update annotations itself
-                let tempAnnotation = self.annotations[fromIndex]
-                self.annotations[fromIndex] = self.annotations[toIndex]
-                self.annotations[toIndex] = tempAnnotation
-                // Alternative way
-                //swap(&self.annotations[fromIndex], &self.annotations[toIndex])
-                
-            default:
-                // Do nothing
-                break
+            guard let count = count else {
+                return
             }
-        }.dispose(in: bag)
+            
+            if count > 100 {
+                return
+            }
+            // Optimized in order #notToBlink
+            for index in 0..<count
+            {
+                guard let placeVM = self.viewModel.visiblePlace(index: index) else {
+                    continue
+                }
+                
+                if let _ = self.displeydPlaceAnnotationFor(placeVM, in: self.mapView.annotations)
+                {
+                    // Nothing to do: annotation is displaeyd for placeVM
+                } else {
+                    let annotation = MKPlaceAnnotation(placeVM)
+                    self.mapView.addAnnotation(annotation)
+                }
+            }
+        }).disposed(by: disposeBag)
+        
+        viewModel.visiblePlacesViewModelsChanges.subscribe(onNext: { change in
+            DispatchQueue.main.async {
+                
+                let existedAnnotations = self.mapView.annotations as! [MKPlaceAnnotation]
+                
+                switch change.action
+                {
+                case .insert(_):
+                    let annotation = MKPlaceAnnotation(change.anObject)
+                    self.mapView.addAnnotation(annotation)
+                    
+                case .delete(_):
+                    guard let placeAnnoationToRemove = self.displeydPlaceAnnotationFor(change.anObject, in: existedAnnotations) else {
+                        return
+                    }
+                    self.mapView.removeAnnotation(placeAnnoationToRemove)
+                    
+                case .update(_):
+                    if let placeAnnoationToUpdate = self.displeydPlaceAnnotationFor(change.anObject, in: existedAnnotations) {
+                        self.mapView.removeAnnotation(placeAnnoationToUpdate)
+                    }
+                    
+                    let annotation = MKPlaceAnnotation(change.anObject)
+                    self.mapView.addAnnotation(annotation)
+                    
+                case .move(_, _):
+                    if let placeAnnoationToUpdate = self.displeydPlaceAnnotationFor(change.anObject, in: existedAnnotations) {
+                        self.mapView.removeAnnotation(placeAnnoationToUpdate)
+                    }
+                    
+                    let annotation = MKPlaceAnnotation(change.anObject)
+                    self.mapView.addAnnotation(annotation)
+                }
+            }
+        }).disposed(by: disposeBag)
+        
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        if let annotationsCount = viewModel.visiblePlacesCount.value
+        {
+            for index in 0..<annotationsCount
+            {
+                guard let placeVM = viewModel.visiblePlace(index: index) else {
+                    continue
+                }
+                
+                let annotation = MKPlaceAnnotation(placeVM)
+                self.mapView.addAnnotation(annotation)
+            }
+        }
+    }
+    
+    func displeydPlaceAnnotationFor(_ placeVM: PlaceViewModel, in annotations: [MKAnnotation]) -> MKPlaceAnnotation?
+    {
+        guard let annotation = annotations.first(where: { (annotation) -> Bool in
+            if let placeAnnotation = annotation as? MKPlaceAnnotation
+            {
+                return placeVM.placeId == placeAnnotation.placeId
+            }
+        
+            return false
+        }) as? MKPlaceAnnotation else {
+            return nil
+        }
+        
+        return annotation
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -162,6 +174,8 @@ class HomeViewController: UIViewController
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
+        
+        bindViewModel()
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -175,15 +189,15 @@ class HomeViewController: UIViewController
     {
         super.viewDidDisappear(animated)
         
-        viewModel.stopTarckingUserLoaction()
+        disposeBag = DisposeBag()
     }
     
-    func addAnnotations(_ locationViewModels: [LocationViewModel])
+    func addAnnotations(_ locationViewModels: [PlaceViewModel])
     {
         var annotations = [MKPointAnnotation]()
         for location in locationViewModels
         {
-            let annotation = MKPointAnnotation.createFor(location)
+            let annotation = MKPlaceAnnotation(location)
             annotations.append(annotation)
         }
         
@@ -212,7 +226,7 @@ extension HomeViewController
                 self.selectedLocationViewModel = nil
             }
             
-            guard let index = viewModel.visibleLocationViewModels.array.index(of:selectedLocationViewModel) else {
+            guard let index = visiblePlacesViewModels?.index(of:selectedLocationViewModel) else {
                 print("Error: Could not get index for selectedLocationViewModel")
                 return
             }
@@ -249,6 +263,27 @@ extension HomeViewController: MKMapViewDelegate
         let neCoordinate = mapView.getNECoordinate()
         let swCoordinate = mapView.getSWCoordinate()
         
+        // Optimized in order #notToBlink
+        DispatchQueue.main.async {
+            for existingAnnotation in mapView.annotations
+            {
+                guard let existingPlaceAnnotation = existingAnnotation as? MKPlaceAnnotation else {
+                    continue
+                }
+                
+                if  existingPlaceAnnotation.coordinate.latitude  <= neCoordinate.latitude &&
+                    existingPlaceAnnotation.coordinate.latitude  >= swCoordinate.latitude &&
+                    
+                    existingPlaceAnnotation.coordinate.longitude <= neCoordinate.longitude &&
+                    existingPlaceAnnotation.coordinate.longitude >= swCoordinate.longitude
+                {
+                    // Nothing to do: annotation is visible
+                } else {
+                    mapView.removeAnnotation(existingAnnotation)
+                }
+            }
+        }
+
         viewModel.updateVisibleArea(neCoordinate: neCoordinate, swCoordinate: swCoordinate)
     }
     
@@ -258,7 +293,7 @@ extension HomeViewController: MKMapViewDelegate
             return nil
         }
         
-        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier:Constants.CustomAnnotationReuseId) as? MKMarkerAnnotationView else
+        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier:MKMapView.ReuseId.CustomAnnotation) as? MKMarkerAnnotationView else
         {
             return nil
         }
@@ -276,12 +311,12 @@ extension HomeViewController: MKMapViewDelegate
             return
         }
         
-        guard let annotation = view.annotation else {
+        guard let annotation = view.annotation as? MKPlaceAnnotation else {
             print("Error: view dont have annotation")
             return
         }
         
-        self.selectedLocationViewModel = viewModel.locationViewModelFor(name: annotation.title, coordinate: annotation.coordinate)
+        self.selectedLocationViewModel = viewModel.placeViewModelFor(placeId: annotation.placeId)
         guard let selectedLocationViewModel = self.selectedLocationViewModel else {
             print("Error: could not select location ViewModel")
             return
@@ -290,20 +325,19 @@ extension HomeViewController: MKMapViewDelegate
         self.showLocationActionSheet(selectedLocationViewModel, annotationView: view)
     }
     
-    func showLocationActionSheet(_ locationViewModel: LocationViewModel, annotationView: MKAnnotationView?)
+    func showLocationActionSheet(_ locationViewModel: PlaceViewModel, annotationView: MKAnnotationView?)
     {
         let title = "Location Selected"
         
-        var message = "What to do with this location?"
-        if let locationName = locationViewModel.name
-        {
-            message.append("\n\(locationName)")
-        }
+        let message = "What to do with this location?\n\(locationViewModel.name)"
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "Edit", style: .default, handler: { action in
-            self.delegate?.homeViewControllerDidSelectEditLocation(locationViewModel)
+            guard let placeId = locationViewModel.placeId else {
+                return
+            }
+            self.delegate?.homeViewControllerDidSelectEditLocation(placeId)
         })
         alertController.addAction(editAction)
         

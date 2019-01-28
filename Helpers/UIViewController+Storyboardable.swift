@@ -6,8 +6,9 @@
 //  Copyright © 2018 Dmitry Lemaykin. All rights reserved.
 //
 
-import Foundation
 import UIKit
+
+extension UIViewController: Storyboardable { }
 
 protocol Storyboardable: class
 {
@@ -30,5 +31,3 @@ extension Storyboardable where Self: UIViewController
         return viewController
     }
 }
-
-extension UIViewController: Storyboardable { }
