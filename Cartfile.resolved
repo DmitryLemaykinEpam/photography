@@ -1,2 +1,2 @@
-github "MagicalPanda/MagicalRecord" "v2.3.3"
 github "ReactiveX/RxSwift" "4.4.0"
+github "RxSwiftCommunity/RxGesture" "1.2.1"

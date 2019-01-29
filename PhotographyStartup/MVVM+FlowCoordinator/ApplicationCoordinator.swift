@@ -15,9 +15,9 @@ class ApplicationCoordinator: NSObject, Coordinator
     
     fileprivate var homeCoordinator: HomeCoordinator?
     
-    fileprivate var placesManager = PlacesManager(context: coreDataStack.mainContext)
+    fileprivate var placesManager = PlacesManager(context: coreDataStack.viewContext)
     fileprivate let userLocationManager = UserLocationManager()
-    fileprivate let visiblePlacesManager = VisiblePlacesManager(context: coreDataStack.mainContext)
+    fileprivate let visiblePlacesManager = VisiblePlacesManager(context: coreDataStack.viewContext)
     
     fileprivate let userLocationSimulator: UserLocationSimulator!
     

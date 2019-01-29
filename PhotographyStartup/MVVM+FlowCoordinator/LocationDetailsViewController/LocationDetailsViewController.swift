@@ -10,7 +10,6 @@ import UIKit
 
 import RxSwift
 
-
 protocol LocationDetailsViewControllerDelegate: class
 {
     func locationDetailsViewControllerDidBackAction()

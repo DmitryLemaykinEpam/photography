@@ -23,7 +23,6 @@
                                 <gestureRecognizers/>
                                 <connections>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Eog-vg-zSR"/>
-                                    <outletCollection property="gestureRecognizers" destination="joN-xS-aOz" appends="YES" id="kgN-th-8fT"/>
                                 </connections>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WaP-DO-Uwg">
@@ -51,17 +50,11 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="mapLongTapGestureRecognizer" destination="joN-xS-aOz" id="QAo-gi-IlZ"/>
+                        <outlet property="allLocationsButton" destination="WaP-DO-Uwg" id="qh0-NW-fWA"/>
                         <outlet property="mapView" destination="mt2-xS-Agm" id="I8e-BB-eN8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="1" minimumPressDuration="0.10000000000000001" id="joN-xS-aOz">
-                    <connections>
-                        <action selector="longTapOnMap:" destination="BYZ-38-t0r" id="AVF-dy-8hZ"/>
-                        <outlet property="delegate" destination="BYZ-38-t0r" id="TeR-oz-OuU"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="69.599999999999994" y="118.29085457271366"/>
         </scene>

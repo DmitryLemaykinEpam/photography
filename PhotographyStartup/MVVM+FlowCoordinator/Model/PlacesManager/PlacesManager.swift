@@ -42,11 +42,11 @@ class PlacesManager: NSObject
     
     func removePlace(_ pleceToRemove: Place)
     {
-        let deletionResult = pleceToRemove.mr_deleteEntity()
-        if !deletionResult {
-            print("Error: Could not delete selected location")
-            return
+        self.context.performAndWait
+        {
+            self.context.delete(pleceToRemove)
         }
+        saveContext(context: self.context)
     }
     
     func placeFor(placeId: String?) -> Place?

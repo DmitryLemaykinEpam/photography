@@ -11,6 +11,7 @@ import MapKit
 
 import RxSwift
 import RxCocoa
+import RxGesture
 
 protocol HomeViewModelProtocol
 {
@@ -25,7 +26,7 @@ protocol HomeViewModelProtocol
     func createLocationViewModel() -> PlaceViewModel?
     func updateVisibleArea(neCoordinate: CLLocationCoordinate2D, swCoordinate: CLLocationCoordinate2D)
     func placeViewModelFor(placeId: String?) -> PlaceViewModel?
-    func removeLocation(_ locationViewModel: PlaceViewModel)
+    func removePlace(_ placeId: String)
 }
 
 protocol HomeViewControllerDelegate: class
@@ -41,7 +42,7 @@ class HomeViewController: UIViewController
     weak var delegate: HomeViewControllerDelegate?
     
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet var mapLongTapGestureRecognizer: UILongPressGestureRecognizer!
+    @IBOutlet weak var allLocationsButton: UIButton!
     
     var selectedLocationViewModel: PlaceViewModel?
     private var visiblePlacesViewModels: [PlaceViewModel]?
@@ -56,6 +57,58 @@ class HomeViewController: UIViewController
         super.viewDidLoad()
         
         mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapView.ReuseId.CustomAnnotation)
+        
+        mapView.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { [weak self] sender in
+                print("mapView tapped")
+                
+                guard let self = self else {
+                    return
+                }
+                
+                if let selectedLocationViewModel = self.selectedLocationViewModel
+                {
+                    defer {
+                        self.selectedLocationViewModel = nil
+                    }
+                    
+                    guard let index = self.visiblePlacesViewModels?.index(of:selectedLocationViewModel) else {
+                        print("Error: Could not get index for selectedLocationViewModel")
+                        return
+                    }
+                    
+                    let annotation = self.annotations[index]
+                    self.mapView.deselectAnnotation(annotation, animated: true)
+                    return
+                }
+                
+                let touchLocation = sender.location(in: self.mapView)
+                let locationCoordinate = self.mapView.convert(touchLocation, toCoordinateFrom: self.mapView)
+                
+                print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
+                
+                guard let newLocationViewModel = self.viewModel.createLocationViewModel() else {
+                    print("Error: could not get newLocationViewModel")
+                    return
+                }
+                newLocationViewModel.coordinate = locationCoordinate
+                newLocationViewModel.save()
+            })
+            .disposed(by: disposeBag)
+        
+        allLocationsButton.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                
+                self.delegate?.homeViewControllerDidSelectShowAllLocations(self)
+            })
+            .disposed(by: disposeBag)
     }
     
     func bindViewModel()
@@ -205,56 +258,6 @@ class HomeViewController: UIViewController
     }
 }
 
-//MARK - User actions
-extension HomeViewController
-{
-    @IBAction func longTapOnMap(_ sender: UILongPressGestureRecognizer)
-    {
-        // Protection from multiple taps
-        if !sender.isEnabled
-        {
-            return
-        }
-        sender.isEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(300)) {
-            sender.isEnabled = true
-        }
-        
-        if let selectedLocationViewModel = self.selectedLocationViewModel
-        {
-            defer {
-                self.selectedLocationViewModel = nil
-            }
-            
-            guard let index = visiblePlacesViewModels?.index(of:selectedLocationViewModel) else {
-                print("Error: Could not get index for selectedLocationViewModel")
-                return
-            }
-            
-            let annotation = annotations[index]
-            mapView.deselectAnnotation(annotation, animated: true)
-            return
-        }
-        
-        let touchLocation = sender.location(in: mapView)
-        let locationCoordinate = mapView.convert(touchLocation, toCoordinateFrom: mapView)
-        
-        print("Tapped at lat: \(locationCoordinate.latitude) lon: \(locationCoordinate.longitude)")
-        
-        guard let newLocationViewModel = viewModel.createLocationViewModel() else {
-            print("Error: could not get newLocationViewModel")
-            return
-        }
-        newLocationViewModel.coordinate = locationCoordinate
-        let _ = newLocationViewModel.save()
-    }
-    
-    @IBAction func allLocationsTap(_ sender: Any)
-    {
-        self.delegate?.homeViewControllerDidSelectShowAllLocations(self)
-    }
-}
-
 // MARK - MKMapViewDelegate
 extension HomeViewController: MKMapViewDelegate
 {
@@ -345,7 +348,12 @@ extension HomeViewController: MKMapViewDelegate
         alertController.addAction(dafaultAction)
         
         let removeAction = UIAlertAction(title: "Remove", style: .destructive, handler:{ action in
-            self.viewModel.removeLocation(locationViewModel)
+            guard let placeId = locationViewModel.placeId else {
+                print("ERROR: could not remove place with no place id")
+                return
+            }
+            
+            self.viewModel.removePlace(placeId)
         })
         alertController.addAction(removeAction)
         

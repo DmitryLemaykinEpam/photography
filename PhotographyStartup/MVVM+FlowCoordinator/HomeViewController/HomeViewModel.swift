@@ -116,9 +116,9 @@ extension HomeViewModel: HomeViewModelProtocol
         return placeViewModel
     }
     
-    func removeLocation(_ locationViewModel: PlaceViewModel)
+    func removePlace(_ placeId: String)
     {
-        guard let place = placesManager.placeFor(placeId: locationViewModel.placeId) else {
+        guard let place = placesManager.placeFor(placeId: placeId) else {
             print("Error: could not get Locations for LocationsViewModel")
             return
         }

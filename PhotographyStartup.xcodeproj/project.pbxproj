@@ -34,12 +34,13 @@
 		3F34C04321539F05009E0C8E /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C04221539F05009E0C8E /* HomeCoordinator.swift */; };
 		3F34C0452153B2F3009E0C8E /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */; };
 		3F34C0472154DCB3009E0C8E /* ClosestPlacesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F34C0462154DCB3009E0C8E /* ClosestPlacesViewModel.swift */; };
+		3F59DB9E22003D0D008E87C6 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F59DB9D22003D0D008E87C6 /* RxGesture.framework */; };
+		3F59DB9F22003D12008E87C6 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F59DB9D22003D0D008E87C6 /* RxGesture.framework */; };
+		3F59DBA022003D12008E87C6 /* RxGesture.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F59DB9D22003D0D008E87C6 /* RxGesture.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3F6DB9962146603D00020D5D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9952146603D00020D5D /* AppDelegate.swift */; };
 		3F6DB9982146603D00020D5D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DB9972146603D00020D5D /* HomeViewController.swift */; };
 		3F6DB9A02146603F00020D5D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB99F2146603F00020D5D /* Assets.xcassets */; };
 		3F6DB9A32146603F00020D5D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F6DB9A12146603F00020D5D /* LaunchScreen.storyboard */; };
-		3F97C58321EF5CD80044DCBB /* MagicalRecord.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F97C56E21EF4DFC0044DCBB /* MagicalRecord.framework */; };
-		3F97C58421EF5CD80044DCBB /* MagicalRecord.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F97C56E21EF4DFC0044DCBB /* MagicalRecord.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3F97C58521EF5CD80044DCBB /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F97C56B21EF4DFC0044DCBB /* RxAtomic.framework */; };
 		3F97C58621EF5CD80044DCBB /* RxAtomic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F97C56B21EF4DFC0044DCBB /* RxAtomic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3F97C58721EF5CD80044DCBB /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F97C56A21EF4DFC0044DCBB /* RxBlocking.framework */; };
@@ -89,8 +90,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3F97C58C21EF5CD80044DCBB /* RxSwift.framework in Embed Frameworks */,
+				3F59DBA022003D12008E87C6 /* RxGesture.framework in Embed Frameworks */,
 				3F97C58A21EF5CD80044DCBB /* RxCocoa.framework in Embed Frameworks */,
-				3F97C58421EF5CD80044DCBB /* MagicalRecord.framework in Embed Frameworks */,
 				3F97C58621EF5CD80044DCBB /* RxAtomic.framework in Embed Frameworks */,
 				3F97C58821EF5CD80044DCBB /* RxBlocking.framework in Embed Frameworks */,
 			);
@@ -125,6 +126,7 @@
 		3F34C04221539F05009E0C8E /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
 		3F34C0442153B2F3009E0C8E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		3F34C0462154DCB3009E0C8E /* ClosestPlacesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosestPlacesViewModel.swift; sourceTree = "<group>"; };
+		3F59DB9D22003D0D008E87C6 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
 		3F6DB9922146603D00020D5D /* PhotographyStartup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotographyStartup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6DB9952146603D00020D5D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3F6DB9972146603D00020D5D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -138,7 +140,6 @@
 		3F97C56B21EF4DFC0044DCBB /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
 		3F97C56C21EF4DFC0044DCBB /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		3F97C56D21EF4DFC0044DCBB /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = Carthage/Build/iOS/RxTest.framework; sourceTree = "<group>"; };
-		3F97C56E21EF4DFC0044DCBB /* MagicalRecord.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MagicalRecord.framework; path = Carthage/Build/iOS/MagicalRecord.framework; sourceTree = "<group>"; };
 		3F97C56F21EF4DFC0044DCBB /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		3F97C58E21EF5E800044DCBB /* MKMapView+ReuseIds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKMapView+ReuseIds.swift"; sourceTree = "<group>"; };
 		3F97C59021EF5F7A0044DCBB /* UITableView+ReuseIds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+ReuseIds.swift"; sourceTree = "<group>"; };
@@ -167,9 +168,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F59DB9E22003D0D008E87C6 /* RxGesture.framework in Frameworks */,
 				3F97C58B21EF5CD80044DCBB /* RxSwift.framework in Frameworks */,
+				3F59DB9F22003D12008E87C6 /* RxGesture.framework in Frameworks */,
 				3F97C58921EF5CD80044DCBB /* RxCocoa.framework in Frameworks */,
-				3F97C58321EF5CD80044DCBB /* MagicalRecord.framework in Frameworks */,
 				3F97C58521EF5CD80044DCBB /* RxAtomic.framework in Frameworks */,
 				3F97C58721EF5CD80044DCBB /* RxBlocking.framework in Frameworks */,
 			);
@@ -302,7 +304,7 @@
 		3F97C56921EF4DFC0044DCBB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3F97C56E21EF4DFC0044DCBB /* MagicalRecord.framework */,
+				3F59DB9D22003D0D008E87C6 /* RxGesture.framework */,
 				3F97C56B21EF4DFC0044DCBB /* RxAtomic.framework */,
 				3F97C56A21EF4DFC0044DCBB /* RxBlocking.framework */,
 				3F97C56C21EF4DFC0044DCBB /* RxCocoa.framework */,

@@ -7,9 +7,10 @@
 //
 
 import Foundation
-import RxSwift
-import MagicalRecord
+import CoreData
 import MapKit
+
+import RxSwift
 
 class ClosestPlacesManager: NSObject
 {

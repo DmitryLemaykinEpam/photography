@@ -13,7 +13,7 @@ class CoreDataStack
 {
     private let modelName: String
     
-    lazy var mainContext: NSManagedObjectContext = {
+    lazy var viewContext: NSManagedObjectContext = {
         return self.storeContainer.viewContext
     }()
     
@@ -38,12 +38,12 @@ extension CoreDataStack
 {
     func saveContext ()
     {
-        guard mainContext.hasChanges else {
+        guard viewContext.hasChanges else {
             return
         }
         
         do {
-            try mainContext.save()
+            try viewContext.save()
         } catch let nserror as NSError {
             fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
